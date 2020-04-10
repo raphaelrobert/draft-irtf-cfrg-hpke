@@ -5,9 +5,9 @@
 Network Working Group                                        R.L. Barnes
 Internet-Draft                                                     Cisco
 Intended status: Informational                              K. Bhargavan
-Expires: 1 October 2020                                            Inria
+Expires: 12 October 2020                                           Inria
                                                                C.A. Wood
-                                                           30 March 2020
+                                                           10 April 2020
 
 
                       Hybrid Public Key Encryption
@@ -39,7 +39,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 October 2020.
+   This Internet-Draft will expire on 12 October 2020.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Barnes, et al.           Expires 1 October 2020                 [Page 1]
+Barnes, et al.           Expires 12 October 2020                [Page 1]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    and restrictions with respect to this document.  Code Components
@@ -70,62 +70,65 @@ Table of Contents
    3.  Notation  . . . . . . . . . . . . . . . . . . . . . . . . . .   4
    4.  Cryptographic Dependencies  . . . . . . . . . . . . . . . . .   4
      4.1.  DH-Based KEM  . . . . . . . . . . . . . . . . . . . . . .   6
-   5.  Hybrid Public Key Encryption  . . . . . . . . . . . . . . . .   7
-     5.1.  Creating the Encryption Context . . . . . . . . . . . . .   8
-       5.1.1.  Encryption to a Public Key  . . . . . . . . . . . . .  11
-       5.1.2.  Authentication using a Pre-Shared Key . . . . . . . .  11
-       5.1.3.  Authentication using an Asymmetric Key  . . . . . . .  12
+   5.  Hybrid Public Key Encryption  . . . . . . . . . . . . . . . .   9
+     5.1.  Creating the Encryption Context . . . . . . . . . . . . .  10
+       5.1.1.  Encryption to a Public Key  . . . . . . . . . . . . .  13
+       5.1.2.  Authentication using a Pre-Shared Key . . . . . . . .  13
+       5.1.3.  Authentication using an Asymmetric Key  . . . . . . .  14
        5.1.4.  Authentication using both a PSK and an Asymmetric
-               Key . . . . . . . . . . . . . . . . . . . . . . . . .  13
-     5.2.  Encryption and Decryption . . . . . . . . . . . . . . . .  13
-     5.3.  Secret Export . . . . . . . . . . . . . . . . . . . . . .  15
-   6.  Single-Shot APIs  . . . . . . . . . . . . . . . . . . . . . .  15
-   7.  Algorithm Identifiers . . . . . . . . . . . . . . . . . . . .  15
-     7.1.  Key Encapsulation Mechanisms (KEMs) . . . . . . . . . . .  16
-       7.1.1.  Marshal . . . . . . . . . . . . . . . . . . . . . . .  16
-       7.1.2.  Validation of Inputs and Outputs  . . . . . . . . . .  16
-     7.2.  Key Derivation Functions (KDFs) . . . . . . . . . . . . .  17
+               Key . . . . . . . . . . . . . . . . . . . . . . . . .  15
+     5.2.  Encryption and Decryption . . . . . . . . . . . . . . . .  15
+     5.3.  Secret Export . . . . . . . . . . . . . . . . . . . . . .  17
+   6.  Single-Shot APIs  . . . . . . . . . . . . . . . . . . . . . .  17
+   7.  Algorithm Identifiers . . . . . . . . . . . . . . . . . . . .  17
+     7.1.  Key Encapsulation Mechanisms (KEMs) . . . . . . . . . . .  18
+       7.1.1.  Marshal . . . . . . . . . . . . . . . . . . . . . . .  18
+       7.1.2.  Validation of Inputs and Outputs  . . . . . . . . . .  18
+     7.2.  Key Derivation Functions (KDFs) . . . . . . . . . . . . .  19
      7.3.  Authenticated Encryption with Associated Data (AEAD)
-           Functions . . . . . . . . . . . . . . . . . . . . . . . .  17
-   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  17
-     8.1.  Security Properties . . . . . . . . . . . . . . . . . . .  17
-     8.2.  Domain Separation . . . . . . . . . . . . . . . . . . . .  19
-     8.3.  External Requirements / Non-Goals . . . . . . . . . . . .  20
-     8.4.  Metadata Protection . . . . . . . . . . . . . . . . . . .  20
-     8.5.  Designated-Verifier Signature . . . . . . . . . . . . . .  21
-   9.  Message Encoding  . . . . . . . . . . . . . . . . . . . . . .  21
-   10. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  21
-     10.1.  KEM Identifiers  . . . . . . . . . . . . . . . . . . . .  22
-     10.2.  KDF Identifiers  . . . . . . . . . . . . . . . . . . . .  22
-     10.3.  AEAD Identifiers . . . . . . . . . . . . . . . . . . . .  22
-   11. References  . . . . . . . . . . . . . . . . . . . . . . . . .  23
-     11.1.  Normative References . . . . . . . . . . . . . . . . . .  23
-     11.2.  Informative References . . . . . . . . . . . . . . . . .  23
-   Appendix A.  Test Vectors . . . . . . . . . . . . . . . . . . . .  26
-     A.1.  DHKEM(Curve25519), HKDF-SHA256, AES-GCM-128 . . . . . . .  26
-       A.1.1.  Base Setup Information  . . . . . . . . . . . . . . .  26
-       A.1.2.  PSK Setup Information . . . . . . . . . . . . . . . .  27
-       A.1.3.  Auth Setup Information  . . . . . . . . . . . . . . .  29
+           Functions . . . . . . . . . . . . . . . . . . . . . . . .  19
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  19
+     8.1.  Security Properties . . . . . . . . . . . . . . . . . . .  19
+     8.2.  Security Requirements on a KEM used within HPKE . . . . .  21
+     8.3.  Security Requirements on a KDF  . . . . . . . . . . . . .  22
+     8.4.  Pre-Shared Key Recommendations  . . . . . . . . . . . . .  22
+     8.5.  Domain Separation . . . . . . . . . . . . . . . . . . . .  22
+     8.6.  External Requirements / Non-Goals . . . . . . . . . . . .  23
+     8.7.  Metadata Protection . . . . . . . . . . . . . . . . . . .  24
+     8.8.  Designated-Verifier Signature . . . . . . . . . . . . . .  24
+   9.  Message Encoding  . . . . . . . . . . . . . . . . . . . . . .  25
+   10. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  25
+     10.1.  KEM Identifiers  . . . . . . . . . . . . . . . . . . . .  25
+     10.2.  KDF Identifiers  . . . . . . . . . . . . . . . . . . . .  26
+     10.3.  AEAD Identifiers . . . . . . . . . . . . . . . . . . . .  26
+   11. References  . . . . . . . . . . . . . . . . . . . . . . . . .  26
+     11.1.  Normative References . . . . . . . . . . . . . . . . . .  26
+     11.2.  Informative References . . . . . . . . . . . . . . . . .  27
+   Appendix A.  Test Vectors . . . . . . . . . . . . . . . . . . . .  29
+     A.1.  DHKEM(Curve25519), HKDF-SHA256, AES-GCM-128 . . . . . . .  29
 
 
 
-Barnes, et al.           Expires 1 October 2020                 [Page 2]
+Barnes, et al.           Expires 12 October 2020                [Page 2]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
-       A.1.4.  AuthPSK Setup Information . . . . . . . . . . . . . .  31
-     A.2.  DHKEM(P-521), HKDF-SHA512, AES-GCM-256  . . . . . . . . .  33
-       A.2.1.  Base Setup Information  . . . . . . . . . . . . . . .  33
-       A.2.2.  PSK Setup Information . . . . . . . . . . . . . . . .  35
-       A.2.3.  Auth Setup Information  . . . . . . . . . . . . . . .  37
-       A.2.4.  AuthPSK Setup Information . . . . . . . . . . . . . .  39
-     A.3.  DHKEM(P-256), HKDF-SHA256, ChaCha20Poly1305 . . . . . . .  41
-       A.3.1.  Base Setup Information  . . . . . . . . . . . . . . .  41
-       A.3.2.  PSK Setup Information . . . . . . . . . . . . . . . .  43
-       A.3.3.  Auth Setup Information  . . . . . . . . . . . . . . .  45
-       A.3.4.  AuthPSK Setup Information . . . . . . . . . . . . . .  47
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  49
+       A.1.1.  Base Setup Information  . . . . . . . . . . . . . . .  29
+       A.1.2.  PSK Setup Information . . . . . . . . . . . . . . . .  31
+       A.1.3.  Auth Setup Information  . . . . . . . . . . . . . . .  33
+       A.1.4.  AuthPSK Setup Information . . . . . . . . . . . . . .  35
+     A.2.  DHKEM(P-521), HKDF-SHA512, AES-GCM-256  . . . . . . . . .  37
+       A.2.1.  Base Setup Information  . . . . . . . . . . . . . . .  37
+       A.2.2.  PSK Setup Information . . . . . . . . . . . . . . . .  39
+       A.2.3.  Auth Setup Information  . . . . . . . . . . . . . . .  41
+       A.2.4.  AuthPSK Setup Information . . . . . . . . . . . . . .  43
+     A.3.  DHKEM(P-256), HKDF-SHA256, ChaCha20Poly1305 . . . . . . .  45
+       A.3.1.  Base Setup Information  . . . . . . . . . . . . . . .  45
+       A.3.2.  PSK Setup Information . . . . . . . . . . . . . . . .  47
+       A.3.3.  Auth Setup Information  . . . . . . . . . . . . . . .  49
+       A.3.4.  AuthPSK Setup Information . . . . . . . . . . . . . .  51
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  53
 
 1.  Introduction
 
@@ -158,17 +161,17 @@ Internet-Draft                    HPKE                        March 2020
    with sufficient clarity that they can be interoperably implemented
    and formally verified.  It is secure against (adaptive) chosen
    ciphertext attacks (IND-CCA2 secure) under classical assumptions
+
+
+
+
+Barnes, et al.           Expires 12 October 2020                [Page 3]
+
+Internet-Draft                    HPKE                        April 2020
+
+
    about the underlying primitives [HPKEAnalysis].  A summary of this
    analysis is in Section 8.1.
-
-
-
-
-
-Barnes, et al.           Expires 1 October 2020                 [Page 3]
-
-Internet-Draft                    HPKE                        March 2020
-
 
 2.  Requirements Notation
 
@@ -215,16 +218,15 @@ Internet-Draft                    HPKE                        March 2020
 
    *  A Key Encapsulation Mechanism (KEM):
 
-      -  GenerateKeyPair(): Generate a key pair (sk, pk)
 
 
 
-
-
-Barnes, et al.           Expires 1 October 2020                 [Page 4]
+Barnes, et al.           Expires 12 October 2020                [Page 4]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
+
+      -  GenerateKeyPair(): Generate a key pair (sk, pk)
 
       -  Marshal(pk): Produce a fixed-length byte string encoding the
          public key "pk"
@@ -250,13 +252,15 @@ Internet-Draft                    HPKE                        March 2020
          key is known only to the holder of the private key
          corresponding to "pkS"
 
-      -  Nenc: The length in bytes of an encapsulated key from this KEM
+      -  Nzz: The length in bytes of a shared secret produced by this
+         KEM
+
+      -  Nenc: The length in bytes of an encapsulated key produced by
+         this KEM
 
       -  Npk: The length in bytes of an encoded public key for this KEM
 
-   *  A Key Derivation Function:
-
-      -  Hash(m): Compute the cryptographic hash of input message "m"
+   *  A Key Derivation Function (KDF):
 
       -  Extract(salt, IKM): Extract a pseudorandom key of fixed length
          from input keying material "IKM" and an optional byte string
@@ -265,22 +269,22 @@ Internet-Draft                    HPKE                        March 2020
       -  Expand(PRK, info, L): Expand a pseudorandom key "PRK" using
          optional string "info" into "L" bytes of output keying material
 
-      -  Nh: The output size of the Hash and Extract functions in octets
+      -  Nh: The output size of the Extract function in bytes
 
    *  An AEAD encryption algorithm [RFC5116]:
+
+
+
+
+
+Barnes, et al.           Expires 12 October 2020                [Page 5]
+
+Internet-Draft                    HPKE                        April 2020
+
 
       -  Seal(key, nonce, aad, pt): Encrypt and authenticate plaintext
          "pt" with associated data "aad" using secret key "key" and
          nonce "nonce", yielding ciphertext and tag "ct"
-
-
-
-
-
-Barnes, et al.           Expires 1 October 2020                 [Page 5]
-
-Internet-Draft                    HPKE                        March 2020
-
 
       -  Open(key, nonce, aad, ct): Decrypt ciphertext "ct" using
          associated data "aad" with secret key "key" and nonce "nonce",
@@ -294,69 +298,169 @@ Internet-Draft                    HPKE                        March 2020
    primitives is provided in Section 7.  Algorithm identifier values are
    two bytes long.
 
+   The following two functions are defined for a KDF to facilitate
+   domain separation of calls as well as context binding:
+
+   def LabeledExtract(salt, label, IKM):
+     labeledIKM = concat("RFCXXXX ", label, IKM)
+     return Extract(salt, labeledIKM)
+
+   def LabeledExpand(PRK, label, info, L):
+     labeledInfo = concat(encode_big_endian(L, 2),
+                           "RFCXXXX ", label, info)
+     return Expand(PRK, labeledInfo, L)
+
+   [[RFC editor: please change "RFCXXXX" to the correct number before
+   publication.]]
+
 4.1.  DH-Based KEM
 
-   Suppose we are given a Diffie-Hellman group that provides the
+   Suppose we are given a KDF, and a Diffie-Hellman group providing the
    following operations:
 
    *  GenerateKeyPair(): Generate an ephemeral key pair "(sk, pk)" for
       the DH group in use
 
    *  DH(sk, pk): Perform a non-interactive DH exchange using the
-      private key sk and public key pk to produce a shared secret of
-      length Npk
+      private key sk and public key pk to produce a Diffie-Hellman
+      shared secret of length Ndh
 
-   *  Marshal(pk): Produce a fixed-length byte string encoding the
+   *  Marshal(pk): Produce a byte string of length Npk encoding the
       public key "pk"
 
-   *  Unmarshal(enc): Parse a fixed-length byte string to recover a
+   *  Unmarshal(enc): Parse a byte string of length Npk to recover a
       public key
 
-   Then we can construct a KEM (which we'll call "DHKEM") in the
-   following way:
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Barnes, et al.           Expires 1 October 2020                 [Page 6]
+Barnes, et al.           Expires 12 October 2020                [Page 6]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
+
+   *  Ndh: The length in bytes of a Diffie-Hellman shared secret
+      produced by the DH function of this KEM.
+
+   Then we can construct a KEM called "DHKEM(Group, KDF)" in the
+   following way, where "Group" denotes the Diffie-Hellman group and
+   "KDF" the KDF:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Barnes, et al.           Expires 12 October 2020                [Page 7]
+
+Internet-Draft                    HPKE                        April 2020
+
+
+   def ExtractAndExpand(dh, kemContext):
+     prk = LabeledExtract(zero(Nh), "dh", dh)
+     return LabeledExpand(prk, "prk", kemContext, Nzz)
 
    def Encap(pkR):
      skE, pkE = GenerateKeyPair()
-     zz = DH(skE, pkR)
+     dh = DH(skE, pkR)
      enc = Marshal(pkE)
+
+     pkRm = Marshal(pkR)
+     kemContext = concat(enc, pkRm)
+
+     zz = ExtractAndExpand(dh, kemContext)
      return zz, enc
 
-   def Decap(enc, skR):
+   def Decap(enc, skR, pkR):
      pkE = Unmarshal(enc)
-     return DH(skR, pkE)
+     dh = DH(skR, pkE)
 
-   def AuthEncap(pkR, skS):
+     pkRm = Marshal(pkR)
+     kemContext = concat(enc, pkRm)
+
+     zz = ExtractAndExpand(dh, kemContext)
+     return zz, enc
+
+   def AuthEncap(pkR, skS, pkS):
      skE, pkE = GenerateKeyPair()
-     zz = concat(DH(skE, pkR), DH(skS, pkR))
+     dh = concat(DH(skE, pkR), DH(skS, pkR))
      enc = Marshal(pkE)
+
+     pkRm = Marshal(pkR)
+     pkSm = Marshal(pkS)
+     kemContext = concat(enc, pkRm, pkSm)
+
+     zz = ExtractAndExpand(dh, kemContext)
      return zz, enc
 
-   def AuthDecap(enc, skR, pkS):
+   def AuthDecap(enc, skR, pkR, pkS):
      pkE = Unmarshal(enc)
-     return concat(DH(skR, pkE), DH(skR, pkS))
+     dh = concat(DH(skR, pkE), DH(skR, pkS))
+
+     pkRm = Marshal(pkR)
+     pkSm = Marshal(pkS)
+     kemContext = concat(enc, pkRm, pkSm)
+
+     zz = ExtractAndExpand(dh, kemContext)
+     return zz, enc
+
+
+
+
+Barnes, et al.           Expires 12 October 2020                [Page 8]
+
+Internet-Draft                    HPKE                        April 2020
+
+
+   The KDF used in DHKEM can be equal to or different from the KDF used
+   in the remainder of HPKE, depending on the chosen variant.
+   Implementations MUST make sure to use the constants (Nh) and function
+   calls (LabeledExtract, LabeledExpand) of the appropriate KDF when
+   implementing DHKEM.  See Section 8.3 for a comment on the choice of a
+   KDF for the remainder of HPKE, and Section 8.5 for the rationale of
+   the labels.
+
+   For the variants of DHKEM defined in this document, Ndh is equal to
+   Npk, and the output length of the KDF's Extract function is Nzz
+   bytes.
 
    The GenerateKeyPair, Marshal, and Unmarshal functions are the same as
    for the underlying DH group.  The Marshal functions for the curves
@@ -364,6 +468,10 @@ Internet-Draft                    HPKE                        March 2020
 
    *  P-256: A single byte set to 4, followed by the X-coordinate and
       the Y-coordinate of the point, encoded as 32-byte big-endian
+      integers
+
+   *  P-384: A single byte set to 4, followed by the X-coordinate and
+      the Y-coordinate of the point, encoded as 48-byte big-endian
       integers
 
    *  P-521: A single byte set to 4, followed by the X-coordinate and
@@ -386,16 +494,17 @@ Internet-Draft                    HPKE                        March 2020
    corresponding to "pkR" can decapsulate the key from "enc" and decrypt
    the ciphertexts.  All of the algorithms also take an "info" parameter
    that can be used to influence the generation of keys (e.g., to fold
-
-
-
-Barnes, et al.           Expires 1 October 2020                 [Page 7]
-
-Internet-Draft                    HPKE                        March 2020
-
-
    in identity information) and an "aad" parameter that provides
    Additional Authenticated Data to the AEAD algorithm in use.
+
+
+
+
+
+Barnes, et al.           Expires 12 October 2020                [Page 9]
+
+Internet-Draft                    HPKE                        April 2020
+
 
    In addition to the base case of encrypting to a public key, we
    include two authenticated variants, one of which authenticates
@@ -441,21 +550,17 @@ Internet-Draft                    HPKE                        March 2020
    schedule that translates the protocol inputs into an encryption
    context.  The key schedule inputs are as follows:
 
-   *  "pkR" - The recipient's public key
-
-
-
-Barnes, et al.           Expires 1 October 2020                 [Page 8]
-
-Internet-Draft                    HPKE                        March 2020
-
-
    *  "zz" - A shared secret generated via the KEM for this transaction
-
-   *  "enc" - An encapsulated key produced by the KEM for the recipient
 
    *  "info" - Application-supplied information (optional; default value
       "")
+
+
+
+Barnes, et al.           Expires 12 October 2020               [Page 10]
+
+Internet-Draft                    HPKE                        April 2020
+
 
    *  "psk" - A pre-shared secret held by both the sender and the
       recipient (optional; default value "zero(Nh)").
@@ -501,9 +606,16 @@ Internet-Draft                    HPKE                        March 2020
 
 
 
-Barnes, et al.           Expires 1 October 2020                 [Page 9]
+
+
+
+
+
+
+
+Barnes, et al.           Expires 12 October 2020               [Page 11]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    default_pkSm = zero(Npk)
@@ -525,28 +637,24 @@ Internet-Draft                    HPKE                        March 2020
      if mode == mode_auth_psk and (no_psk or no_pkSm):
        raise Exception("Invalid configuration for mode_auth_psk")
 
-   def KeySchedule(mode, pkR, zz, enc, info, psk, pskID, pkSm):
+   def KeySchedule(mode, zz, info, psk, pskID, pkSm):
      VerifyMode(mode, psk, pskID, pkSm)
 
-     pkRm = Marshal(pkR)
-     identifier = "RFCXXXX"
      ciphersuite = concat(encode_big_endian(kem_id, 2),
                           encode_big_endian(kdf_id, 2),
                           encode_big_endian(aead_id, 2))
-     pskID_hash = Hash(pskID)
-     info_hash = Hash(info)
-     context = concat(identifier, ciphersuite, mode, enc, pkRm,
-                      pkSm, pskID_hash, info_hash)
+     pskID_hash = LabeledExtract(zero(Nh), "pskID", pskID)
+     info_hash = LabeledExtract(zero(Nh), "info", info)
+     context = concat(ciphersuite, mode, pskID_hash, info_hash)
 
-     secret = Extract(psk, zz)
-     key = Expand(secret, concat("key", context), Nk)
-     nonce = Expand(secret, concat("nonce", context), Nn)
-     exporter_secret = Expand(secret, concat("exp", context), Nh)
+     psk = LabeledExtract(zero(Nh), "psk", psk)
+
+     secret = LabeledExtract(psk, "zz", zz)
+     key = LabeledExpand(secret, "key", context, Nk)
+     nonce = LabeledExpand(secret, "nonce", context, Nn)
+     exporter_secret = LabeledExpand(secret, "exp", context, Nh)
 
      return Context(key, nonce, exporter_secret)
-
-   [[RFC editor: please change "RFCXXXX" to the correct number before
-   publication.]]
 
    Note that the context construction in the KeySchedule procedure is
    equivalent to serializing a structure of the following form in the
@@ -557,17 +665,21 @@ Internet-Draft                    HPKE                        March 2020
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 10]
+
+
+
+
+Barnes, et al.           Expires 12 October 2020               [Page 12]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    struct {
        // Mode and algorithms
-       uint8 mode;
        uint16 kem_id;
        uint16 kdf_id;
        uint16 aead_id;
+       uint8 mode;
 
        // Public inputs to this key exchange
        opaque enc[Nenc];
@@ -613,9 +725,9 @@ Internet-Draft                    HPKE                        March 2020
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 11]
+Barnes, et al.           Expires 12 October 2020               [Page 13]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    The primary differences from the base case are:
@@ -625,10 +737,9 @@ Internet-Draft                    HPKE                        March 2020
    *  The PSK ID is added to the context string used as the "info" input
       to the KDF
 
-   This mechanism is not suitable for use with a low-entropy password as
-   the PSK.  A malicious recipient that does not possess the PSK can use
-   decryption of a plaintext as an oracle for performing offline
-   dictionary attacks.
+   The PSK SHOULD be of length Nh bytes or longer, and SHOULD have Nh
+   bytes of entropy or more.  See Section 8.4 for a more detailed
+   discussion.
 
    def SetupPSKS(pkR, info, psk, pskID):
      zz, enc = Encap(pkR)
@@ -669,9 +780,10 @@ Internet-Draft                    HPKE                        March 2020
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 12]
+
+Barnes, et al.           Expires 12 October 2020               [Page 14]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    def SetupAuthS(pkR, info, skS):
@@ -705,6 +817,10 @@ Internet-Draft                    HPKE                        March 2020
      return KeySchedule(mode_auth_psk, pk(skR), zz, enc, info,
                         psk, pskID, pkSm)
 
+   The PSK SHOULD be of length Nh bytes or longer, and SHOULD have Nh
+   bytes of entropy or more.  See Section 8.4 for a more detailed
+   discussion.
+
 5.2.  Encryption and Decryption
 
    HPKE allows multiple encryption operations to be done based on a
@@ -719,16 +835,16 @@ Internet-Draft                    HPKE                        March 2020
 
    *  The AEAD algorithm in use
 
+
+
+Barnes, et al.           Expires 12 October 2020               [Page 15]
+
+Internet-Draft                    HPKE                        April 2020
+
+
    *  The key to be used with the AEAD algorithm
 
    *  A base nonce value
-
-
-
-Barnes, et al.           Expires 1 October 2020                [Page 13]
-
-Internet-Draft                    HPKE                        March 2020
-
 
    *  A sequence number (initially 0)
 
@@ -777,13 +893,9 @@ Internet-Draft                    HPKE                        March 2020
 
 
 
-
-
-
-
-Barnes, et al.           Expires 1 October 2020                [Page 14]
+Barnes, et al.           Expires 12 October 2020               [Page 16]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
 5.3.  Secret Export
@@ -796,7 +908,7 @@ Internet-Draft                    HPKE                        March 2020
    corresponding KDF Expand function.
 
    def Context.Export(exporter_context, L):
-     return Expand(self.exporter_secret, exporter_context, L)
+     return LabeledExpand(self.exporter_secret, "sec", exporter_context, L)
 
 6.  Single-Shot APIs
 
@@ -837,30 +949,35 @@ Internet-Draft                    HPKE                        March 2020
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 15]
+Barnes, et al.           Expires 12 October 2020               [Page 17]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
 7.1.  Key Encapsulation Mechanisms (KEMs)
 
-        +--------+-------------------+------+-----+--------------+
-        | Value  | KEM               | Nenc | Npk | Reference    |
-        +========+===================+======+=====+==============+
-        | 0x0000 | (reserved)        | N/A  | N/A | N/A          |
-        +--------+-------------------+------+-----+--------------+
-        | 0x0010 | DHKEM(P-256)      | 65   | 65  | [NISTCurves] |
-        +--------+-------------------+------+-----+--------------+
-        | 0x0011 | DHKEM(P-384)      | 97   | 97  | [NISTCurves] |
-        +--------+-------------------+------+-----+--------------+
-        | 0x0012 | DHKEM(P-521)      | 133  | 133 | [NISTCurves] |
-        +--------+-------------------+------+-----+--------------+
-        | 0x0020 | DHKEM(Curve25519) | 32   | 32  | [RFC7748]    |
-        +--------+-------------------+------+-----+--------------+
-        | 0x0021 | DHKEM(Curve448)   | 56   | 56  | [RFC7748]    |
-        +--------+-------------------+------+-----+--------------+
+     +--------+-------------------+-----+------+-----+---------------+
+     | Value  | KEM               | Nzz | Nenc | Npk | Reference     |
+     +========+===================+=====+======+=====+===============+
+     | 0x0000 | (reserved)        | N/A | N/A  | N/A | N/A           |
+     +--------+-------------------+-----+------+-----+---------------+
+     | 0x0010 | DHKEM(P-256,      | 32  | 65   | 65  | [NISTCurves], |
+     |        | HKDF-SHA256)      |     |      |     | [RFC5869]     |
+     +--------+-------------------+-----+------+-----+---------------+
+     | 0x0011 | DHKEM(P-384,      | 48  | 97   | 97  | [NISTCurves], |
+     |        | HKDF-SHA384)      |     |      |     | [RFC5869]     |
+     +--------+-------------------+-----+------+-----+---------------+
+     | 0x0012 | DHKEM(P-521,      | 64  | 133  | 133 | [NISTCurves], |
+     |        | HKDF-SHA512)      |     |      |     | [RFC5869]     |
+     +--------+-------------------+-----+------+-----+---------------+
+     | 0x0020 | DHKEM(Curve25519, | 32  | 32   | 32  | [RFC7748],    |
+     |        | HKDF-SHA256)      |     |      |     | [RFC5869]     |
+     +--------+-------------------+-----+------+-----+---------------+
+     | 0x0021 | DHKEM(Curve448,   | 64  | 56   | 56  | [RFC7748],    |
+     |        | HKDF-SHA512)      |     |      |     | [RFC5869]     |
+     +--------+-------------------+-----+------+-----+---------------+
 
-                                 Table 2
+                                  Table 2
 
 7.1.1.  Marshal
 
@@ -885,19 +1002,19 @@ Internet-Draft                    HPKE                        March 2020
    defined in [keyagreement], which includes validating that a public
    key is on the curve and part of the correct prime-order subgroup.
    Additionally, one of the following checks MUST be ensured: the scalar
+
+
+
+Barnes, et al.           Expires 12 October 2020               [Page 18]
+
+Internet-Draft                    HPKE                        April 2020
+
+
    given as input to DH is in the interval [1, n-1] where n is the prime
    order of the subgroup; the result of DH is not the point at infinity.
 
    For the CFRG curves Curve25519 and Curve448, validation of public
    keys is not required.  Senders and recipients MUST check whether the
-
-
-
-Barnes, et al.           Expires 1 October 2020                [Page 16]
-
-Internet-Draft                    HPKE                        March 2020
-
-
    shared secret is the all-zero value and abort if so, as described in
    [RFC7748].
 
@@ -942,17 +1059,15 @@ Internet-Draft                    HPKE                        March 2020
    secrets of senders and recipients.  The desired security goals are
    detailed below:
 
+
+
+Barnes, et al.           Expires 12 October 2020               [Page 19]
+
+Internet-Draft                    HPKE                        April 2020
+
+
    *  Message secrecy: Privacy of the sender's messages, i.e., IND-CCA2
       security
-
-
-
-
-
-Barnes, et al.           Expires 1 October 2020                [Page 17]
-
-Internet-Draft                    HPKE                        March 2020
-
 
    *  Export key secrecy: Indistinguishability of each export secret
       from a uniformly random bitstring of equal length
@@ -976,12 +1091,13 @@ Internet-Draft                    HPKE                        March 2020
 
    *  DH group: The gap Diffie-Hellman (GDH) problem is hard [GAP].
 
-   *  Hash: Collision resistance.
+   *  Extract and Expand (in DHKEM): Extract is indifferentiable from a
+      random oracle.  Expand is a pseudorandom function, wherein the
+      first argument is the key.
 
-   *  Extract: Indifferentiable from a random oracle.
-
-   *  Expand: Behaves as a pseudorandom function wherein the first
-      argument is the key.
+   *  Extract and Expand (elsewhere): Extract is indifferentiable from a
+      random oracle.  Expand is a pseudorandom function, wherein the
+      first argument is the key.
 
    In particular, the KDFs and DH groups defined in this document (see
    Section 7.2 and Section 7.1) satisfy these properties.
@@ -997,18 +1113,18 @@ Internet-Draft                    HPKE                        March 2020
    export interface.  We distinguish these two variants because the
    single-shot API does not lend itself to use the Export interface.
 
+
+
+
+
+Barnes, et al.           Expires 12 October 2020               [Page 20]
+
+Internet-Draft                    HPKE                        April 2020
+
+
    The table below summarizes the main results from [HPKEAnalysis].  N/A
    means that a property does not apply for the given mode, whereas X
    means the given mode satisfies the property.
-
-
-
-
-
-Barnes, et al.           Expires 1 October 2020                [Page 18]
-
-Internet-Draft                    HPKE                        March 2020
-
 
    +----------------------+--------------+-------------+--------------+
    | Variant              | Message Sec. | Export Sec. | Sender Auth. |
@@ -1043,30 +1159,100 @@ Internet-Draft                    HPKE                        March 2020
    security would need to take this difference into account, in addition
    to simply using a post-quantum KEM.
 
-8.2.  Domain Separation
+8.2.  Security Requirements on a KEM used within HPKE
 
-   [[RFC editor: please change "RFCXXXX" to the correct number before
-   publication.]]
-
-   The KeySchedule procedure includes the domain separation string
-   "RFCXXXX" in each Expand invocation.  This ensures any secrets
-   derived in HPKE are independent from those used in other protocols,
-   even when derived from the same IKM (secret).  Derivation of the
-   KeySchedule 'secret' does not include domain separation as it is an
-   intermediate value not exposed by the protocol.
-
-
+   A KEM used within HPKE MUST ensure the following to avoid identity
+   mis-binding issues: The shared secret computed by Encap and Decap
+   MUST depend explicitly on the KEM public key pkR and the KEM
+   ciphertext enc.  The shared secret returned by AuthEncap and
+   AuthDecap MUST explicitly depend on the KEM public keys pkR and pkS
+   and the KEM ciphertext enc.  This is usually implemented by including
+   these values explicitly into the context of the key derivation
+   function used to compute the shared secret.  This is also how DHKEM
+   meets the requirement.
 
 
 
-
-
-Barnes, et al.           Expires 1 October 2020                [Page 19]
+Barnes, et al.           Expires 12 October 2020               [Page 21]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
-8.3.  External Requirements / Non-Goals
+8.3.  Security Requirements on a KDF
+
+   The choice of the KDF for the remainder of HPKE should be made based
+   on the security level provided by the KEM and, if applicable, by the
+   PSK.  The KDF SHOULD have at least have the security level of the KEM
+   and SHOULD at least have the security level provided by the PSK.
+
+   HPKE's KeySchedule uses LabeledExtract to convert an arbitrary-length
+   PSK into a fixed-length PSK.  This is necessary because of the
+   restrictions on the key in HMAC's indifferentiability theorem [HMAC].
+   A future instantiation of HPKE MAY omit this line if: Extract is not
+   instantiated by HKDF-Extract and there is an indifferentiability
+   theorem for Extract without restriction on the key's length.
+
+8.4.  Pre-Shared Key Recommendations
+
+   In the PSK and AuthPSK modes, the PSK SHOULD be of length Nh bytes or
+   longer, and SHOULD have Nh bytes of entropy or more.  Using a PSK
+   shorter than Nh bytes is permitted.  A PSK that is longer than Nh
+   bytes or that has more than Nh bytes of entropy, respectively, does
+   not increase the security level of HPKE, because the extraction step
+   involving the PSK only outputs Nh bytes.
+
+   HPKE is specified to use HKDF as key derivation function.  HKDF is
+   not designed to slow down dictionary attacks, see [RFC5869].  Thus,
+   HPKE's PSK mechanism is not suitable for use with a low-entropy
+   password as the PSK: in scenarios in which the adversary knows the
+   KEM shared secret zz and has access to an oracle that allows to
+   distinguish between a good and a wrong PSK, it can perform a
+   dictionary attack on the PSK.  This oracle can be the decryption
+   operation on a captured HPKE ciphertext or any other recipient
+   behavior which is observably different when using a wrong PSK.  The
+   adversary knows the KEM shared secret zz if it knows all KEM private
+   keys of one participant.  In the PSK mode this is trivially the case
+   if the adversary acts as sender.
+
+8.5.  Domain Separation
+
+   HPKE allows combining a DHKEM variant DHKEM(Group, KDF') and a KDF
+   such that both KDFs are instantiated by the same KDF.  By design, the
+   calls to Extract and Expand inside DHKEM and the remainder of HPKE
+   have different prefix-free encodings for the second parameter.  This
+   is achieved by the different prefix-free label parameters in the
+   calls to LabeledExtract and LabeledExpand.  This serves to separate
+   the input domains of all Extract and Expand invocations.  It also
+   justifies modeling them as independent functions even if instantiated
+   by the same KDF.
+
+
+
+
+Barnes, et al.           Expires 12 October 2020               [Page 22]
+
+Internet-Draft                    HPKE                        April 2020
+
+
+   Future KEM instantiations MUST ensure that all internal invocations
+   of Extract and Expand can be modeled as functions independent from
+   the invocations of Extract and Expand in the remainder of HPKE.  One
+   way to ensure this is by using an equal or similar prefixing scheme
+   with an identifier different from "RFCXXXX ".  Particular attention
+   needs to be paid if the KEM directly invokes functions that are used
+   internally in HPKE's Extract or Expand, such as Hash and HMAC in the
+   case of HKDF.  It MUST be ensured that inputs to these invocations
+   cannot collide with inputs to the internal invocations of these
+   functions inside Extract or Expand.  In HPKE's KeySchedule this is
+   avoided by using Extract instead of Hash on the arbitrary-length
+   inputs "info", "pskID", and "psk".
+
+   The string literal "RFCXXXX" used in LabeledExtract and LabeledExpand
+   ensures that any secrets derived in HPKE are bound to the scheme's
+   name, even when possibly derived from the same Diffie-Hellman or KEM
+   shared secret as in another scheme.
+
+8.6.  External Requirements / Non-Goals
 
    HPKE is designed to be a fairly low-level primitive, and thus does
    not provide several features that a more high-level protocol might
@@ -1089,7 +1275,22 @@ Internet-Draft                    HPKE                        March 2020
       and mode_auth_psk, a given ciphertext can be decrypted if the
       recipient's public encryption key and the PSK are compromised.
 
-8.4.  Metadata Protection
+
+
+
+
+
+
+
+
+
+
+Barnes, et al.           Expires 12 October 2020               [Page 23]
+
+Internet-Draft                    HPKE                        April 2020
+
+
+8.7.  Metadata Protection
 
    The authenticated modes of HPKE (PSK, Auth, AuthPSK) require that the
    recipient know what key material to use for the sender.  This can be
@@ -1112,17 +1313,7 @@ Internet-Draft                    HPKE                        March 2020
    schemes in [BNT19] could be extended to cover other metadata.
    However, this construction would require further analysis.
 
-
-
-
-
-
-Barnes, et al.           Expires 1 October 2020                [Page 20]
-
-Internet-Draft                    HPKE                        March 2020
-
-
-8.5.  Designated-Verifier Signature
+8.8.  Designated-Verifier Signature
 
    The Auth and AuthPSK modes HPKE can be used to construct a
    lightweight "designated-verifier signature" scheme [JKR96], in the
@@ -1148,6 +1339,13 @@ Internet-Draft                    HPKE                        March 2020
    algorithm in use, while using the KEM to establish a one-time
    authentication key from a pair of KEM public keys.
 
+
+
+Barnes, et al.           Expires 12 October 2020               [Page 24]
+
+Internet-Draft                    HPKE                        April 2020
+
+
 9.  Message Encoding
 
    This document does not specify a wire format encoding for HPKE
@@ -1170,14 +1368,6 @@ Internet-Draft                    HPKE                        March 2020
    Key Encryption", and administered under a Specification Required
    policy [RFC8126]
 
-
-
-
-Barnes, et al.           Expires 1 October 2020                [Page 21]
-
-Internet-Draft                    HPKE                        March 2020
-
-
 10.1.  KEM Identifiers
 
    The "HPKE KEM Identifiers" registry lists identifiers for key
@@ -1190,6 +1380,9 @@ Internet-Draft                    HPKE                        March 2020
 
    *  KEM: The name of the algorithm
 
+   *  Nzz: The length in bytes of a shared secret produced by the
+      algorithm
+
    *  Nenc: The length in bytes of an encapsulated key produced by the
       algorithm
 
@@ -1199,6 +1392,15 @@ Internet-Draft                    HPKE                        March 2020
    *  Reference: Where this algorithm is defined
 
    Initial contents: Provided in Section 7.1
+
+
+
+
+
+Barnes, et al.           Expires 12 October 2020               [Page 25]
+
+Internet-Draft                    HPKE                        April 2020
+
 
 10.2.  KDF Identifiers
 
@@ -1212,7 +1414,7 @@ Internet-Draft                    HPKE                        March 2020
 
    *  KDF: The name of the algorithm
 
-   *  Nh: The length in bytes of the output of the KDF
+   *  Nh: The output size of the Extract function in bytes
 
    *  Reference: Where this algorithm is defined
 
@@ -1226,13 +1428,6 @@ Internet-Draft                    HPKE                        March 2020
    possible value is 0xFFFF = 65535.
 
    Template:
-
-
-
-Barnes, et al.           Expires 1 October 2020                [Page 22]
-
-Internet-Draft                    HPKE                        March 2020
-
 
    *  Value: The two-byte identifier for the algorithm
 
@@ -1254,6 +1449,14 @@ Internet-Draft                    HPKE                        March 2020
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
+
+
+
+
+Barnes, et al.           Expires 12 October 2020               [Page 26]
+
+Internet-Draft                    HPKE                        April 2020
+
 
    [RFC5116]  McGrew, D., "An Interface and Algorithms for Authenticated
               Encryption", RFC 5116, DOI 10.17487/RFC5116, January 2008,
@@ -1281,15 +1484,6 @@ Internet-Draft                    HPKE                        March 2020
               Schemes Secure against Adaptive Chosen Ciphertext Attack",
               2001, <https://eprint.iacr.org/2001/108>.
 
-
-
-
-
-Barnes, et al.           Expires 1 October 2020                [Page 23]
-
-Internet-Draft                    HPKE                        March 2020
-
-
    [fiveG]    "Security architecture and procedures for 5G System",
               2019,
               <https://portal.3gpp.org/desktopmodules/Specifications/
@@ -1306,7 +1500,20 @@ Internet-Draft                    HPKE                        March 2020
               Institute of Standards and Technology report, 2007,
               <https://doi.org/10.6028/nist.sp.800-38d>.
 
+   [HMAC]     "To Hash or Not to Hash Again? (In)differentiability
+              Results for H^2 and HMAC", 2013,
+              <https://eprint.iacr.org/2013/382>.
+
    [HPKEAnalysis]
+
+
+
+
+Barnes, et al.           Expires 12 October 2020               [Page 27]
+
+Internet-Draft                    HPKE                        April 2020
+
+
               "An Analysis of Hybrid Public Key Encryption", 2020,
               <https://eprint.iacr.org/2020/243.pdf>.
 
@@ -1338,14 +1545,6 @@ Internet-Draft                    HPKE                        March 2020
    [keyagreement]
               Barker, E., Chen, L., Roginsky, A., Vassilev, A., and R.
               Davis, "Recommendation for pair-wise key-establishment
-
-
-
-Barnes, et al.           Expires 1 October 2020                [Page 24]
-
-Internet-Draft                    HPKE                        March 2020
-
-
               schemes using discrete logarithm cryptography",
               DOI 10.6028/nist.sp.800-56ar3, National Institute of
               Standards and Technology report, April 2018,
@@ -1363,6 +1562,14 @@ Internet-Draft                    HPKE                        March 2020
 
    [RFC5869]  Krawczyk, H. and P. Eronen, "HMAC-based Extract-and-Expand
               Key Derivation Function (HKDF)", RFC 5869,
+
+
+
+Barnes, et al.           Expires 12 October 2020               [Page 28]
+
+Internet-Draft                    HPKE                        April 2020
+
+
               DOI 10.17487/RFC5869, May 2010,
               <https://www.rfc-editor.org/info/rfc5869>.
 
@@ -1392,16 +1599,6 @@ Internet-Draft                    HPKE                        March 2020
               hpke/blob/1e98830311b27f9af00787c16e2c5ac43abeadfb/test-
               vectors.json>.
 
-
-
-
-
-
-Barnes, et al.           Expires 1 October 2020                [Page 25]
-
-Internet-Draft                    HPKE                        March 2020
-
-
 Appendix A.  Test Vectors
 
    These test vectors are also available in JSON format at
@@ -1410,6 +1607,24 @@ Appendix A.  Test Vectors
 A.1.  DHKEM(Curve25519), HKDF-SHA256, AES-GCM-128
 
 A.1.1.  Base Setup Information
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Barnes, et al.           Expires 12 October 2020               [Page 29]
+
+Internet-Draft                    HPKE                        April 2020
+
 
    mode: 0
    kemID: 2
@@ -1453,9 +1668,18 @@ A.1.1.1.  Encryptions
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 26]
+
+
+
+
+
+
+
+
+
+Barnes, et al.           Expires 12 October 2020               [Page 30]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    sequence number: 0
@@ -1509,9 +1733,9 @@ A.1.2.  PSK Setup Information
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 27]
+Barnes, et al.           Expires 12 October 2020               [Page 31]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    mode: 1
@@ -1565,9 +1789,9 @@ A.1.2.1.  Encryptions
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 28]
+Barnes, et al.           Expires 12 October 2020               [Page 32]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    sequence number: 0
@@ -1621,9 +1845,9 @@ A.1.3.  Auth Setup Information
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 29]
+Barnes, et al.           Expires 12 October 2020               [Page 33]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    mode: 2
@@ -1677,9 +1901,9 @@ A.1.3.1.  Encryptions
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 30]
+Barnes, et al.           Expires 12 October 2020               [Page 34]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    sequence number: 0
@@ -1733,9 +1957,9 @@ A.1.4.  AuthPSK Setup Information
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 31]
+Barnes, et al.           Expires 12 October 2020               [Page 35]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    mode: 3
@@ -1789,9 +2013,9 @@ A.1.4.1.  Encryptions
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 32]
+Barnes, et al.           Expires 12 October 2020               [Page 36]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    sequence number: 0
@@ -1845,9 +2069,9 @@ A.2.1.  Base Setup Information
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 33]
+Barnes, et al.           Expires 12 October 2020               [Page 37]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    f9aca4bb88f6a416ca3339579b29a038c2124b2f9dfc9b306eb57b77961d6ad444daf3a7
@@ -1901,9 +2125,9 @@ A.2.1.1.  Encryptions
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 34]
+Barnes, et al.           Expires 12 October 2020               [Page 38]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    sequence number: 0
@@ -1957,9 +2181,9 @@ A.2.2.  PSK Setup Information
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 35]
+Barnes, et al.           Expires 12 October 2020               [Page 39]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    pkS: 04008b2f8d9d12b888774f70ee6722025ebd0061910cac04d6b447879dd2170c176
@@ -2013,9 +2237,9 @@ A.2.2.1.  Encryptions
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 36]
+Barnes, et al.           Expires 12 October 2020               [Page 40]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    sequence number: 0
@@ -2069,9 +2293,9 @@ A.2.3.  Auth Setup Information
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 37]
+Barnes, et al.           Expires 12 October 2020               [Page 41]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    pkS: 0400b04e91f3a4ae9ca6de1d1df6642685100b87d667c39bb39ef49c5b8da5ca33c
@@ -2125,9 +2349,9 @@ A.2.3.1.  Encryptions
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 38]
+Barnes, et al.           Expires 12 October 2020               [Page 42]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    sequence number: 0
@@ -2181,9 +2405,9 @@ A.2.4.  AuthPSK Setup Information
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 39]
+Barnes, et al.           Expires 12 October 2020               [Page 43]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    pkS: 04007b742d25deaf50156f092ca17b3ce582a77da2db3be658e5e8d1df40fa83ac5
@@ -2237,9 +2461,9 @@ A.2.4.1.  Encryptions
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 40]
+Barnes, et al.           Expires 12 October 2020               [Page 44]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    sequence number: 0
@@ -2293,9 +2517,9 @@ A.3.1.  Base Setup Information
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 41]
+Barnes, et al.           Expires 12 October 2020               [Page 45]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    mode: 0
@@ -2349,9 +2573,9 @@ A.3.1.1.  Encryptions
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 42]
+Barnes, et al.           Expires 12 October 2020               [Page 46]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    sequence number: 0
@@ -2405,9 +2629,9 @@ A.3.2.  PSK Setup Information
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 43]
+Barnes, et al.           Expires 12 October 2020               [Page 47]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    mode: 1
@@ -2461,9 +2685,9 @@ A.3.2.1.  Encryptions
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 44]
+Barnes, et al.           Expires 12 October 2020               [Page 48]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    sequence number: 0
@@ -2517,9 +2741,9 @@ A.3.3.  Auth Setup Information
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 45]
+Barnes, et al.           Expires 12 October 2020               [Page 49]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    mode: 2
@@ -2573,9 +2797,9 @@ A.3.3.1.  Encryptions
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 46]
+Barnes, et al.           Expires 12 October 2020               [Page 50]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    sequence number: 0
@@ -2629,9 +2853,9 @@ A.3.4.  AuthPSK Setup Information
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 47]
+Barnes, et al.           Expires 12 October 2020               [Page 51]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    mode: 3
@@ -2685,9 +2909,9 @@ A.3.4.1.  Encryptions
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 48]
+Barnes, et al.           Expires 12 October 2020               [Page 52]
 
-Internet-Draft                    HPKE                        March 2020
+Internet-Draft                    HPKE                        April 2020
 
 
    sequence number: 0
@@ -2741,4 +2965,4 @@ Authors' Addresses
 
 
 
-Barnes, et al.           Expires 1 October 2020                [Page 49]
+Barnes, et al.           Expires 12 October 2020               [Page 53]

@@ -1,6 +1,6 @@
 {
   "magic": "B8n2c@e8kvfx",
-  "timestamp": "2020-03-30T22:55:21.779442+00:00",
+  "timestamp": "2020-04-10T20:32:11.221182+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hpke",
   "labels": [
     {
@@ -3432,17 +3432,17 @@
       "id": "MDExOlB1bGxSZXF1ZXN0Mzg0OTIyOTkx",
       "title": "Modifications for IND-CCA-secure DHKEM and independent random oracles",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/50",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "blipp",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "The isolated DHKEM cannot be proven IND-CCA-secure as it is: In the current Encap, nothing is done with the result of the DH operation, `zz`. This means there is nowhere where the GDH assumption can be applied, as for this we need a comparison of a value with `g^ab` in the game, like `g^c = g^ab`, which we can then change in a game hop to `false`.\r\n\r\nThis is not a problem when looking at HPKE as a whole, because `zz` is fed into Extract which we model as a random oracle. For DHKEM isolated, this problem can be fixed by feeding the Diffie-Hellman shared secret through another random oracle before returning the result as `zz`.\r\n\r\nThe hash functions suggested in this pull request are chosen to correspond to the security level of the elliptic curve DH, respectively. If users of HPKE want to use only one hash function, then they need to choose the KDF depending on the used DHKEM. Specifying each DHKEM for multiple (i.e. different output size) hash functions seems overkill and like sending wrong signals about the security level of DHKEM.\r\n\r\nRegarding random oracle cloning: By introducing another call to a random oracle, which might be implemented by the same hash function, this becomes now more relevant than before. I think we need to make sure that Hash' and the calls to Hash inside HMAC are independent, to be able to use the indifferentiability theorem on SHAxxx. I looked at the input domains of these two calls for SHA256, SHA384, and SHA512 and they are indeed _already disjoint_ by their lengths. An open question is if we need to do something about the Hash calls `Hash(pskID)` and `Hash(info)` that we model as collision resistant. I like to discuss this with Bruno and/or Karthik before proceeding.\r\n\r\nThis pull request is to keep you in the loop, please feel free to provide preliminary feedback.",
       "createdAt": "2020-03-06T16:54:50Z",
-      "updatedAt": "2020-03-27T18:28:45Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
+      "updatedAt": "2020-04-10T20:31:27Z",
+      "closedAt": "2020-04-10T20:31:27Z",
+      "mergedAt": "2020-04-10T20:31:27Z",
+      "mergedBy": "bifurcation",
       "comments": [
         {
           "author": "blipp",
@@ -3555,6 +3555,20 @@
           "body": "> enc, pkSm, pkRm are now part of the context of both DHKEM and KeySchedule. It would be ok to not include them in KeySchedule's context if HPKE would require from a KEM that public keys and the KEM ciphertext are included explicitly in the derivation of the KEM shared secret.\r\n\r\nInteresting point. I think this is nice simplification of the key schedule and a perfectly fine requirement to levy on future KEMs. @bifurcation, penny for your thoughts?",
           "createdAt": "2020-03-25T17:46:09Z",
           "updatedAt": "2020-03-25T17:46:09Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@bifurcation please review!",
+          "createdAt": "2020-03-30T22:56:31Z",
+          "updatedAt": "2020-03-30T22:56:31Z"
+        },
+        {
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "> > enc, pkSm, pkRm are now part of the context of both DHKEM and KeySchedule. It would be ok to not include them in KeySchedule's context if HPKE would require from a KEM that public keys and the KEM ciphertext are included explicitly in the derivation of the KEM shared secret.\r\n> \r\n> Interesting point. I think this is nice simplification of the key schedule and a perfectly fine requirement to levy on future KEMs. @bifurcation, penny for your thoughts?\r\n\r\nAddressed in commit https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/50/commits/38f915fe919c8514a8bb2f3127438ec899330711.",
+          "createdAt": "2020-04-08T19:31:04Z",
+          "updatedAt": "2020-04-08T19:31:04Z"
         }
       ],
       "reviews": [
@@ -3574,7 +3588,7 @@
               "originalPosition": 63,
               "body": "Can we introduce this notation (`DHKEM(curve, hash)`) in the DHKEM section?",
               "createdAt": "2020-03-06T16:58:38Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -3594,19 +3608,19 @@
               "originalPosition": 13,
               "body": "I would just add this to the above list of required functions.  \"Suppose we are given a Diffie-Hellman group and a hash function ...\"",
               "createdAt": "2020-03-06T16:58:47Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 15,
               "body": "For compatibility with programming languages, might call this \"Hash2\" or something that could actually be a function name in.",
               "createdAt": "2020-03-06T16:59:45Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 16,
               "body": "`Nzz` needs to be defined somewhere; TBH seems like this would be good to know for other KEMs as well.  I think this loses the idea that the DH output is fixed-size, though.  Do we need that?",
               "createdAt": "2020-03-06T17:01:01Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -3626,7 +3640,7 @@
               "originalPosition": 16,
               "body": "Putting it alongside the `Nh` et al. definitions would suffice. \r\n\r\n> I think this loses the idea that the DH output is fixed-size, though. Do we need that?\r\n\r\n@bifurcation I'm not sure I follow. Nzz *is* fixed, so isn't the output fixed size?",
               "createdAt": "2020-03-06T17:06:10Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -3646,7 +3660,7 @@
               "originalPosition": 16,
               "body": "Good point, I'll add `Nzz` to the \u201cCryptographic Dependencies\u201d part; I am not sure what you mean regarding the fixed-size DH output? (sorry for the double question, I was writing at the same time with Chris ;) )",
               "createdAt": "2020-03-06T17:09:47Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -3666,7 +3680,7 @@
               "originalPosition": 16,
               "body": "Might be relevant: Encap and AuthEncap now have the same output size for `zz`. Before, AuthEncap's `zz` had double the size of Encap's `zz`.",
               "createdAt": "2020-03-06T17:14:47Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -3686,7 +3700,7 @@
               "originalPosition": 16,
               "body": "Interesting -- does that affect analysis?",
               "createdAt": "2020-03-06T17:16:19Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -3706,7 +3720,7 @@
               "originalPosition": 16,
               "body": "Not so much I'd say \u2013 it makes analysis of Extract a bit easier because it's input length has one case distinction less.",
               "createdAt": "2020-03-06T17:22:02Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -3726,19 +3740,19 @@
               "originalPosition": 25,
               "body": "It seems like it might be worth defining a different length, say `Ndh` for this, since there are definitely schemes where the shared secret is not of length `Npk`.",
               "createdAt": "2020-03-23T19:04:20Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 32,
               "body": "I wonder if it would be simplest to do something like the following\r\n\r\n```\r\ndef LabeledExtract(salt, label, secret):\r\n    labeledSecret = concat(\"RFC XXXX\", label, secret)  \r\n    return Extract(salt, labeledSecret)\r\n```\r\n\r\nThis is what TLS 1.3 does to make sure the general label gets added everywhere.",
               "createdAt": "2020-03-23T19:08:26Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 32,
               "body": "Is there a reason to attach the label to the secret vs. the salt?",
               "createdAt": "2020-03-23T19:08:54Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -3758,7 +3772,7 @@
               "originalPosition": 32,
               "body": "> Is there a reason to attach the label to the secret vs. the salt?\r\n\r\nThe goal of the label in the end is to separate the input domains of all HMAC calls. This concerns Extract and Expand. The three Expand calls for key, nonce, exporter_secret already have the label as prefix of the second argument, and that's why it's in the second argument for Extract, too (and thus attached to the secret/IKM).",
               "createdAt": "2020-03-24T16:31:26Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -3778,7 +3792,7 @@
               "originalPosition": 32,
               "body": "> I wonder if it would be simplest to do something like the following [\u2026]\r\n> This is what TLS 1.3 does to make sure the general label gets added everywhere.\r\n\r\nUps, I forgot that in my recent update. I'll first write some comments to what I did there, and later try to incorporate this suggestions.",
               "createdAt": "2020-03-24T23:57:09Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -3798,7 +3812,7 @@
               "originalPosition": 168,
               "body": "Is this correct for the 12-letter UTF-8 string literal \u201cRFCXXXX HPKE\u201d?",
               "createdAt": "2020-03-25T12:06:36Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -3818,79 +3832,79 @@
               "originalPosition": 168,
               "body": "Let's treat it as an ASCII string, in which case, yes!",
               "createdAt": "2020-03-25T17:24:49Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 167,
               "body": "```suggestion\r\n    uint8 identifier[12] = \"RFCXXXX HPKE\";\r\n```",
               "createdAt": "2020-03-25T17:25:03Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 46,
               "body": "Re-defining this is somewhat confusing -- is it needed? ",
               "createdAt": "2020-03-25T17:26:30Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 40,
               "body": "Can we define `Ndh` on its own line? (I missed it the first time around.) Is it even needed?",
               "createdAt": "2020-03-25T17:28:08Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 67,
               "body": "```suggestion\r\n  prk = Extract_kem(0, concat(label_dh, dh))\r\n```",
               "createdAt": "2020-03-25T17:29:01Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 81,
               "body": "```suggestion\r\n  prk = Extract_kem(0, concat(label_dh, dh))\r\n```",
               "createdAt": "2020-03-25T17:29:10Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 95,
               "body": "```suggestion\r\n  prk = Extract_kem(0, concat(label_dh, dh))\r\n```",
               "createdAt": "2020-03-25T17:29:20Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 109,
               "body": "```suggestion\r\n  prk = Extract_kem(0, concat(label_dh, dh))\r\n```",
               "createdAt": "2020-03-25T17:29:30Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 187,
               "body": "Can we pull the text from #59 and place it here? (And move the next paragraph to the security considerations as is done in #59?)",
               "createdAt": "2020-03-25T17:30:29Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 243,
               "body": "```suggestion\r\n## Domain Separation\r\n```\r\n\r\n... since Random Oracle Cloning isn't a widely used term yet.",
               "createdAt": "2020-03-25T17:32:39Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 256,
               "body": "```suggestion\r\nFuture KEM instantiations MUST ensure that all internal hash function invocations are prefixed with a unique label similar to `\"RFCXXXX DHKEM\"`. This ensures they can be modeled as a function independent from `Hash`.\r\n```",
               "createdAt": "2020-03-25T17:34:57Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 53,
               "body": "```suggestion\r\nThen we can construct a KEM called `DHKEM(Group, Hash_kem)` in the\r\nfollowing way, where `Group` denotes the Diffie-Hellman group and\r\n`Hash_kem` the hash function underlying KDF_kem:\r\n```",
               "createdAt": "2020-03-25T17:37:32Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 67,
               "body": "These lines (prk = ..., zz = ...) are the same across all variants. Can we pull them out into a common function that takes `dh`, `context_kem` as input?\r\n\r\n```\r\ndef ExtractAndExpand(dh, prk):\r\n   prk = Extract_kem(0, concat(\"RFCXXXX DHKEM\", dh))\r\n   zz  = Expand_kem(prk, concat(\"prk\", context_kem), Nzz)\r\n```\r\n\r\nThen call like so:\r\n\r\n```\r\ndef Encap(pkR):\r\n   ...\r\n   zz = ExtractAndExpand(dh, context_kem)\r\n   return zz, enc\r\n```",
               "createdAt": "2020-03-25T17:41:49Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -3910,7 +3924,7 @@
               "originalPosition": 46,
               "body": "We also redefine GenerateKeyPair, DH, Marshal, Unmarshal to make their definitions adapted to DHKEM. With the line about Nzz I want to make clear that Nzz is the length of Hash_kem's output. This is only implicitly clear by seeing that the result of Expand is returned.\r\n\r\nIt's true that this (Nzz is the length of Hash_kem's output) is true for our variants of DHKEM with SHA2. But now that I included Nzz as third argument to Expand, other settings are also possible.\r\n\r\nSo maybe we could move this line away from the definitions list and put it as a comment below the pseudo-code, saying that for our specified versions of DHKEM, Nzz is Hash_kem's output length. What do you think about that?",
               "createdAt": "2020-03-26T15:09:04Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -3930,7 +3944,7 @@
               "originalPosition": 40,
               "body": "This was a suggestion by @bifurcation, with the background that there might be a DH scheme where the result of the DH operation is not an encoded public key.\r\n\r\nWe can move it to it's own line I think.",
               "createdAt": "2020-03-26T15:11:48Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -3950,7 +3964,7 @@
               "originalPosition": 46,
               "body": "> So maybe we could move this line away from the definitions list and put it as a comment below the pseudo-code, saying that for our specified versions of DHKEM, Nzz is Hash_kem's output length. What do you think about that?\r\n\r\nThat'd be great!",
               "createdAt": "2020-03-26T17:55:41Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -3970,31 +3984,31 @@
               "originalPosition": 86,
               "body": "```suggestion\r\nThe adversary can use different oracles to decide if a PSK guess was correct,\r\n```",
               "createdAt": "2020-03-26T18:05:50Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 88,
               "body": "```suggestion\r\nthe adversary can use decryption of the ciphertext as oracle. HPKE ciphertexts are\r\n```",
               "createdAt": "2020-03-26T18:06:35Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 87,
               "body": "In this scenario, the adversary didn't guess the PSK value, so I don't think it's a relevant example.",
               "createdAt": "2020-03-26T18:09:15Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 97,
               "body": "```suggestion\r\nScenarios in which the adversary knows the KEM shared secret zz\r\n```",
               "createdAt": "2020-03-26T18:09:32Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             },
             {
               "originalPosition": 103,
               "body": "```suggestion\r\nknows all private keys of one participant. \r\n```\r\n\r\nI recommend deleting these examples as knowledge of all private keys of one participant is adequate. ",
               "createdAt": "2020-03-26T18:13:30Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -4014,7 +4028,7 @@
               "originalPosition": 87,
               "body": "The adversary can try decryption for each PSK value it wants to guess. This is an example of a passive adversary. Would replacing \u201con observation of an HPKE ciphertext\u201d by \u201cwith a captured HPKE ciphertext\u201d make this clearer?",
               "createdAt": "2020-03-26T18:27:07Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -4034,7 +4048,7 @@
               "originalPosition": 87,
               "body": "If the adversary doesn't have access to the ephemeral or private shares, this isn't possible, right? ",
               "createdAt": "2020-03-26T18:29:46Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -4054,7 +4068,7 @@
               "originalPosition": 163,
               "body": "Is it ok to use the already defined `len()` for the psk?\r\n```\r\n- `len(x)`: The length of the byte string `x`, expressed as a\r\n  two-byte unsigned integer in network (big-endian) byte order\r\n```\r\nFor now `len()` is only used to get the length of the nonce:\r\n```\r\ndef Context.Nonce(seq):\r\n  encSeq = encode_big_endian(seq, len(self.nonce))\r\n  return xor(self.nonce, encSeq)\r\n```\r\nBy the way, why compute the length of the nonce here? We know that it has length `Nn`. Also, why does encode_big_endian apparently need the length in \u201cnetwork (big-endian) byte order\u201d and as two-byte integer?",
               "createdAt": "2020-03-27T11:36:08Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -4074,7 +4088,7 @@
               "originalPosition": 163,
               "body": "Yep, it's fine, and preferred! We pass a length in case the resulting number needs to be padded with zeros.",
               "createdAt": "2020-03-27T15:33:47Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -4094,7 +4108,7 @@
               "originalPosition": 24,
               "body": "```suggestion\r\n```",
               "createdAt": "2020-03-27T15:35:34Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -4114,7 +4128,7 @@
               "originalPosition": 31,
               "body": "```suggestion\r\nBy design, the calls to Extract and Expand inside DHKEM and the remainder of HPKE \r\nhave different prefix-free encodings for the second parameter. This is achieved by the \r\ndifferent prefix-free label parameters in the calls to LabeledExtract and LabeledExpand. \r\nThis serves to separate all Extract and Expand invocation input domains. It also justifies \r\nmodeling them as independent functions even if instantiated by the same KDF.\r\n```",
               "createdAt": "2020-03-27T15:39:14Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -4134,7 +4148,7 @@
               "originalPosition": 41,
               "body": "```suggestion\r\nin HPKE's Extract or Expand, such as Hash in the case of HKDF. Inputs to these\r\ninvocations MUST apply domain separation such that they cannot collide\r\nwith inputs used inside Extract or Expand.\r\n```",
               "createdAt": "2020-03-27T15:42:11Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -4154,7 +4168,7 @@
               "originalPosition": 43,
               "body": "```suggestion\r\nThe string literal \"RFCXXXX\" used in LabeledExtract and LabeledExpand\r\n```",
               "createdAt": "2020-03-27T15:42:27Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
         },
@@ -4187,9 +4201,533 @@
               "originalPosition": 41,
               "body": "(I don't know why but it's marked as outdated for me, already before my most recent commit)\r\nI applied the suggestions with the \u201csuch\u201d and \u201cthe\u201d. Domain separation is not the solution here because we cannot change the inputs to the internal invocations.",
               "createdAt": "2020-03-27T18:27:50Z",
-              "updatedAt": "2020-03-27T18:28:45Z"
+              "updatedAt": "2020-04-08T20:11:52Z"
             }
           ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3Mzg0ODk0NjE4",
+          "commit": {
+            "abbreviatedOid": "d48bab9"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "This is on the right track, but needs some tweaks.\r\n",
+          "createdAt": "2020-03-31T16:17:03Z",
+          "updatedAt": "2020-03-31T16:39:14Z",
+          "comments": [
+            {
+              "originalPosition": 32,
+              "body": "Nit: I would remove the `_` here.",
+              "createdAt": "2020-03-31T16:17:04Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            },
+            {
+              "originalPosition": 33,
+              "body": "Is there a reason to put the label on the IKM vs. the salt?",
+              "createdAt": "2020-03-31T16:17:16Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            },
+            {
+              "originalPosition": 31,
+              "body": "You use `0` for the salt value several times below.  It would be good to clarify whether that means (a) an all-zero octet string (and if so, what length), or (b) the empty octet string.",
+              "createdAt": "2020-03-31T16:23:30Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            },
+            {
+              "originalPosition": 108,
+              "body": "Nit: Suggest `kemContext`",
+              "createdAt": "2020-03-31T16:24:56Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            },
+            {
+              "originalPosition": 129,
+              "body": "Do we have guidance on what the right answer is?",
+              "createdAt": "2020-03-31T16:27:30Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            },
+            {
+              "originalPosition": 11,
+              "body": "Can we get rid of `Hash()` now?",
+              "createdAt": "2020-03-31T16:29:20Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            },
+            {
+              "originalPosition": 288,
+              "body": "What does \"respectively\" mean here?  If you mean that they are each individually indifferentiable, I would phrase as \"Each function is individually indifferentiable from a random oracle\".",
+              "createdAt": "2020-03-31T16:32:57Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            },
+            {
+              "originalPosition": 288,
+              "body": "I assume this bullet and the next one are supposed to be \"KDF used in DHKEM\" and \"KDF used in the rest of HPKE\"?  If so, let's just say that.  Something like:\r\n\r\n```\r\n- Extract and Expand (in DHKEM): ...\r\n- Extract and Expand (elsewhere): ...\r\n```",
+              "createdAt": "2020-03-31T16:34:07Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            },
+            {
+              "originalPosition": 310,
+              "body": "\"In the PSK and AuthPSK modes, ...\"",
+              "createdAt": "2020-03-31T16:34:37Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            },
+            {
+              "originalPosition": 323,
+              "body": "How does Seal/Open prevent this?  If you behave differently on decryption failure, then it seems like you still create an oracle.  ",
+              "createdAt": "2020-03-31T16:35:57Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            },
+            {
+              "originalPosition": 329,
+              "body": "What do you mean by \"it is enough\"?  Also, I don't understand the dependency on DHKEM here.",
+              "createdAt": "2020-03-31T16:38:19Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            },
+            {
+              "originalPosition": 166,
+              "body": "Why do we need this explicit hashing step?  Shouldn't the internals of `LabeledExtract` handle that for us?",
+              "createdAt": "2020-03-31T16:38:59Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3Mzg0OTQ5MDc5",
+          "commit": {
+            "abbreviatedOid": "d48bab9"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-03-31T17:24:53Z",
+          "updatedAt": "2020-03-31T17:24:54Z",
+          "comments": [
+            {
+              "originalPosition": 33,
+              "body": "In the end, the goal of the label is to separate the input domains of all HMAC calls. This concerns both Extract and Expand. The three Expand calls for key, nonce, exporter_secret already have a label as prefix of the second argument, and that's why it's in the second argument for Extract, too (and thus attached to the IKM).",
+              "createdAt": "2020-03-31T17:24:53Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3Mzg0OTUzODky",
+          "commit": {
+            "abbreviatedOid": "d48bab9"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-03-31T17:31:06Z",
+          "updatedAt": "2020-03-31T17:31:07Z",
+          "comments": [
+            {
+              "originalPosition": 129,
+              "body": "In this pull request, I suggest one particular KDF for each of DHKEM's DH groups. This recommendation is based on the security level of the DH group. We could include as guidance that choosing the same KDF for the remainder of KDF is the best trade-of: this keeps the security level of DHKEM while not pretending a higher security level by using a KDF with greater output length.\r\n\r\nDoes this go into the direction you meant to go with your question?",
+              "createdAt": "2020-03-31T17:31:06Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3Mzg0OTU1MTc1",
+          "commit": {
+            "abbreviatedOid": "d48bab9"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-03-31T17:32:52Z",
+          "updatedAt": "2020-03-31T17:32:52Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "I also had this thought but didn't follow it yet, thanks for bringing it up. I think we can get rid of Hash. I'll have a look where in the spec this would need adjustment.",
+              "createdAt": "2020-03-31T17:32:52Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3Mzg0OTU3NTI3",
+          "commit": {
+            "abbreviatedOid": "d48bab9"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-03-31T17:36:00Z",
+          "updatedAt": "2020-03-31T17:36:01Z",
+          "comments": [
+            {
+              "originalPosition": 288,
+              "body": "Ups, sorry that one slipped through after removing the `_kem` suffix. Yes, it means \u201cEach function [\u2026]\u201d.",
+              "createdAt": "2020-03-31T17:36:00Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3Mzg0OTY0MTUz",
+          "commit": {
+            "abbreviatedOid": "d48bab9"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-03-31T17:44:51Z",
+          "updatedAt": "2020-03-31T17:44:52Z",
+          "comments": [
+            {
+              "originalPosition": 323,
+              "body": "New proposal:\r\n\r\nThus, HPKE's PSK mechanism is not suitable for use with a low-entropy\r\npassword as the PSK: in scenarios in which the adversary knows the\r\nKEM shared secret zz and has access to an oracle that allows to distinguish\r\nbetween a good and a wrong key, it can perform a dictionary attack on the PSK.\r\nThis oracle can be the decryption operation on a captured HPKE ciphertext or\r\nany other recipient behavior which is observably different when using a wrong key.",
+              "createdAt": "2020-03-31T17:44:51Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3Mzg0OTcyNzE3",
+          "commit": {
+            "abbreviatedOid": "d48bab9"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-03-31T17:56:14Z",
+          "updatedAt": "2020-03-31T17:56:14Z",
+          "comments": [
+            {
+              "originalPosition": 329,
+              "body": "The adversary knows the KEM shared secret zz in certain compromise scenarios. We were hesitant to make a general claim about compromise scenarios with a general KEM. But maybe it's actually possible. Have to think about it.\r\n\r\nThe \u201cenough\u201d because people could think that for DHKEM's AuthPSK it is not enough to know only the recipient's private static key, but that knowing the sender's private static key is also necessary; because of key-compromise impersonation this is not the case. We could do without the \u201cenough\u201d and say \u201cFor DHKEM this is the case if the adversary knows all private keys of one participant\u201d.",
+              "createdAt": "2020-03-31T17:56:14Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3Mzg0OTc4NjIw",
+          "commit": {
+            "abbreviatedOid": "d48bab9"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-03-31T18:04:11Z",
+          "updatedAt": "2020-03-31T18:04:11Z",
+          "comments": [
+            {
+              "originalPosition": 166,
+              "body": "Are you suggesting that this `if` should be inside LabeledExtract? This is the only place where we give an arbitrary-length bitstring as the first parameter to (Labeled)Extract, so maybe it's wasteful to have the branching every time (even for all the calls with 0 as first parameter)? If you say you prefer this to have a cleaner KeySchedule, I think I could agree.\r\n\r\nJust in case: Have you seen my earlier comment? It might have been buried within this long discussion, so let me cite:\r\n\r\nhttps://github.com/cfrg/draft-irtf-cfrg-hpke/pull/50#issuecomment-603568796\r\n\r\n> On the PSK length:\r\n> \r\n> HMAC(K, M) feeds K through a call to Hash if K is longer than Hash's blocksize. If we allow arbitrary-size PSKs for user convenience, this would introduce another place where Hash is called on arbitrary-sized input, just like with info and pskID. (As a reminder: Arbitrary-sized input to Hash can lead to collisions with input to Hash calls inside HMAC. This would render the proof inapplicable that proves indifferentiability of HMAC from a random oracle. To avoid collisions, we use Extract calls and separate the input domains by using a prefix).\r\n> \r\n> To avoid this extra Hash call inside HMAC, we can just anticipate it directly in KeySchedule, and thus control the prefix. While this introduces branching inside KeySchedule, this branching would either way be done inside HMAC. Doing the Extract call even if the PSK is shorter then Nb would hurt performance in non-PSK modes, too.\r\n\r\n",
+              "createdAt": "2020-03-31T18:04:11Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3Mzg0OTgwNDI1",
+          "commit": {
+            "abbreviatedOid": "d48bab9"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "(Github said: \u201cYou need to leave a comment indicating the requested changes.\u201d, so I just copied this text here)",
+          "createdAt": "2020-03-31T18:06:43Z",
+          "updatedAt": "2020-03-31T18:07:27Z",
+          "comments": []
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3Mzg2NDkxMjIw",
+          "commit": {
+            "abbreviatedOid": "d48bab9"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-04-02T14:37:19Z",
+          "updatedAt": "2020-04-02T14:37:19Z",
+          "comments": [
+            {
+              "originalPosition": 329,
+              "body": "For a \u201cgood or bad PSK\u201d oracle, knowing the secrets of _one_ party is enough because: Each one of the two parties involved in HPKE must be able to decrypt a message, and each party only knows its own secrets.\r\n\r\nI will rephrase the paragraph accordingly.",
+              "createdAt": "2020-04-02T14:37:19Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3Mzg3MjMzOTQz",
+          "commit": {
+            "abbreviatedOid": "d48bab9"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-04-03T13:02:22Z",
+          "updatedAt": "2020-04-03T13:02:22Z",
+          "comments": [
+            {
+              "originalPosition": 166,
+              "body": "I am reading specs of Keccak and Blake2/3 to see if they do internal hashing in their KDF/XOF modes that could collide with a Hash call inside HPKE. This `len > Nb` step is very specific to HMAC, and people might implement Extract and Expand with something different. So maybe we can come up with a more general statement here instead of hardcoding support for HMAC.",
+              "createdAt": "2020-04-03T13:02:22Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3Mzg3NDQ3NDA4",
+          "commit": {
+            "abbreviatedOid": "8a2d43c"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-04-03T17:28:20Z",
+          "updatedAt": "2020-04-03T17:31:31Z",
+          "comments": [
+            {
+              "originalPosition": 166,
+              "body": "Right, I was thinking that in the HKDF case, this duplicated what HMAC was doing internally.  If there's nothing current that is doing something that would collide, I would suggest we remove this, and maybe add a note about the assumption we're making about the KDF (no internal hashing that could collide).",
+              "createdAt": "2020-04-03T17:28:21Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            },
+            {
+              "originalPosition": 323,
+              "body": "Works for me, thanks.",
+              "createdAt": "2020-04-03T17:30:06Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            },
+            {
+              "originalPosition": 329,
+              "body": "I see.  I think I misunderstood the \"Scenaris where the adversary knows zz\" above.  With your new text above, it's clearer.",
+              "createdAt": "2020-04-03T17:31:24Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3MzkwMDgyMDg2",
+          "commit": {
+            "abbreviatedOid": "8a2d43c"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-04-08T15:24:59Z",
+          "updatedAt": "2020-04-08T15:25:00Z",
+          "comments": [
+            {
+              "originalPosition": 31,
+              "body": "In commit https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/50/commits/e7313ea2845c72a543dcc32f1eb2be99acb2d9d9, I chose to make explicit what HKDF-Extract would do by default, by using `zero(Nh)`.",
+              "createdAt": "2020-04-08T15:25:00Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3MzkwMTA2NTU5",
+          "commit": {
+            "abbreviatedOid": "1c84680"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-04-08T15:52:11Z",
+          "updatedAt": "2020-04-08T15:52:11Z",
+          "comments": [
+            {
+              "originalPosition": 329,
+              "body": "To everyone: I attempted to clarify this in commit https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/50/commits/1c84680727de94679dcf1f96c7c401a0cc8178b8, please let me know if you think this works. I decided to attach this to the previous paragraph, because it kind of belongs to it; please let me know if you like that.",
+              "createdAt": "2020-04-08T15:52:11Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3MzkwMTM0MTgz",
+          "commit": {
+            "abbreviatedOid": "1c84680"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-04-08T16:24:15Z",
+          "updatedAt": "2020-04-08T16:24:16Z",
+          "comments": [
+            {
+              "originalPosition": 329,
+              "body": "This reads well to me. Thanks for clarifying, @blipp!",
+              "createdAt": "2020-04-08T16:24:16Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3MzkwMTM2NDMz",
+          "commit": {
+            "abbreviatedOid": "1c84680"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-04-08T16:27:07Z",
+          "updatedAt": "2020-04-08T16:27:08Z",
+          "comments": [
+            {
+              "originalPosition": 166,
+              "body": "@bifurcation this isn't quite duplicating what HMAC is doing internally, since it explicitly prefixes the input before hashing.",
+              "createdAt": "2020-04-08T16:27:07Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3MzkwMjIwMzkw",
+          "commit": {
+            "abbreviatedOid": "421828d"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-04-08T18:20:46Z",
+          "updatedAt": "2020-04-08T18:20:46Z",
+          "comments": [
+            {
+              "originalPosition": 166,
+              "body": "With commit https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/50/commits/421828db601168b9f81acc6d299754e477e4d10a, the PSK is now always fed through LabeledExtract. I included my reasoning in the commit message. Please let me know if that makes sense to you.",
+              "createdAt": "2020-04-08T18:20:46Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3MzkwMjIyMzg4",
+          "commit": {
+            "abbreviatedOid": "421828d"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-04-08T18:23:29Z",
+          "updatedAt": "2020-04-08T18:23:30Z",
+          "comments": [
+            {
+              "originalPosition": 166,
+              "body": "An alternative to feeding the PSK always through LabeledExtract is to restrict the PSK to a fixed length, for example to Nh.",
+              "createdAt": "2020-04-08T18:23:30Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3MzkwMjIzNjg1",
+          "commit": {
+            "abbreviatedOid": "421828d"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-04-08T18:25:15Z",
+          "updatedAt": "2020-04-08T18:25:16Z",
+          "comments": [
+            {
+              "originalPosition": 166,
+              "body": "\ud83d\udc4d ",
+              "createdAt": "2020-04-08T18:25:15Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3MzkwMjI1OTUy",
+          "commit": {
+            "abbreviatedOid": "8772378"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-04-08T18:28:21Z",
+          "updatedAt": "2020-04-08T18:28:22Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "Removed Hash (and Nb) with commit https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/50/commits/877237816152d2a58dc866bba1c9e12b3c4a5a93.",
+              "createdAt": "2020-04-08T18:28:21Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3MzkwMjMyNTA2",
+          "commit": {
+            "abbreviatedOid": "fbea8c0"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-04-08T18:37:11Z",
+          "updatedAt": "2020-04-08T18:37:11Z",
+          "comments": [
+            {
+              "originalPosition": 288,
+              "body": "Addressed in commit https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/50/commits/fbea8c041a50b6db3a458b7c2cdefa4cdb1014e8.",
+              "createdAt": "2020-04-08T18:37:11Z",
+              "updatedAt": "2020-04-08T20:11:52Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3MzkwMjk2Mzk0",
+          "commit": {
+            "abbreviatedOid": "09acc77"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-04-08T20:12:47Z",
+          "updatedAt": "2020-04-08T20:12:48Z",
+          "comments": [
+            {
+              "originalPosition": 166,
+              "body": "If someone implements Extract and Expand with something else than HKDF, like a modern hash function's KDF and XOF modes, then this PSK hashing step is probably not needed. I attempted a formulation with commit https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/50/commits/09acc770c7604185836085499b7284dcfa0568a8.",
+              "createdAt": "2020-04-08T20:12:47Z",
+              "updatedAt": "2020-04-08T20:12:48Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3MzkxNjUwNzA5",
+          "commit": {
+            "abbreviatedOid": "09acc77"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2020-04-10T20:31:16Z",
+          "updatedAt": "2020-04-10T20:31:16Z",
+          "comments": []
         }
       ]
     },
@@ -4944,19 +5482,33 @@
       "id": "MDExOlB1bGxSZXF1ZXN0Mzk0OTE0OTM3",
       "title": "Simplify definition of the len function",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/61",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "blipp",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "- We know that the length of the nonce is `Nn` because it was created with `Expand(\u2026, \u2026, Nn)`, so we don't need a dynamic computation of it.\r\n- For `len` and `zero`, clarify that the length is in bytes\r\n\r\nNow the _only_ use of `len` is when we compare the length of the PSK to `Nb` (if #50 gets merged as is):\r\n```\r\n  if len(psk) > Nb then:\r\n    psk = LabeledExtract(0, \"psk\", psk)\r\n```\r\n\r\nI suggest that in the definition of `len` we remove the part that details that the result is `expressed as two-byte unsigned integer in network (big-endian) byte order`. Arguments pro:\r\n- little-endian is the dominant ordering for processor architectures. This would mean that most implementations must do extra work to have len return big-endian, just to notice then that Nb is little-endian and that they cannot compare a big-endian value to a little-endian one.\r\n- it arbitrarily limits the PSK to 2^16 bytes\r\n- we don't specify how implementations have to store local integer values like `Nn`, `Nh`, etc so it seems overly specific to impose a certain encoding for the result of an internal function",
       "createdAt": "2020-03-27T18:44:06Z",
-      "updatedAt": "2020-03-27T18:45:12Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
+      "updatedAt": "2020-03-30T22:56:17Z",
+      "closedAt": "2020-03-30T22:56:17Z",
+      "mergedAt": "2020-03-30T22:56:17Z",
+      "mergedBy": "chris-wood",
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3Mzg0MjkwMTQy",
+          "commit": {
+            "abbreviatedOid": "3463416"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2020-03-30T22:56:12Z",
+          "updatedAt": "2020-03-30T22:56:12Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }

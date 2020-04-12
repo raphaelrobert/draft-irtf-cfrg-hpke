@@ -1,6 +1,6 @@
 {
   "magic": "B8n2c@e8kvfx",
-  "timestamp": "2020-04-10T20:32:11.221182+00:00",
+  "timestamp": "2020-04-12T15:33:08.371962+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hpke",
   "labels": [
     {
@@ -451,25 +451,41 @@
       "labels": [],
       "body": "At the moment, the length of psk in the test vectors is the same for SHA256 and SHA512. As far as I can tell, psk should only contain 32 bytes for SHA256 instead of 64.\r\nAdditionally, psk, pskID and pkS are not needed in the Base setup (https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/master/draft-irtf-cfrg-hpke.md#base-setup-information for instance)",
       "createdAt": "2020-03-09T20:21:10Z",
-      "updatedAt": "2020-03-09T20:21:10Z",
+      "updatedAt": "2020-04-10T21:05:09Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> At the moment, the length of psk in the test vectors is the same for SHA256 and SHA512. As far as I can tell, psk should only contain 32 bytes for SHA256 instead of 64.\r\n\r\nThe length of the PSK is not required to match the KDF. I hope we clarified that in the current version: https://cfrg.github.io/draft-irtf-cfrg-hpke/draft-irtf-cfrg-hpke.html#name-authentication-using-a-pre-\r\n\r\n> Additionally, psk, pskID and pkS are not needed in the Base setup (https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/master/draft-irtf-cfrg-hpke.md#base-setup-information for instance)\r\n\r\nGood catch! I'll use this issue to track removing them from those modes. ",
+          "createdAt": "2020-04-10T21:05:09Z",
+          "updatedAt": "2020-04-10T21:05:09Z"
+        }
+      ]
     },
     {
       "number": 53,
       "id": "MDU6SXNzdWU1ODAxNjQyNzU=",
       "title": "Mismatch on zz length for P-256",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/53",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "R1kM",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "`zz`, as computed by `Decap`, is indicated to have length `Npk` https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/master/draft-irtf-cfrg-hpke.md#dh-based-kem.\r\nThis does not match the length of the test vector provided for P-256 https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/master/draft-irtf-cfrg-hpke.md#base-setup-information-2",
       "createdAt": "2020-03-12T19:15:52Z",
-      "updatedAt": "2020-03-12T19:15:52Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2020-04-10T21:01:13Z",
+      "closedAt": "2020-04-10T21:01:13Z",
+      "comments": [
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "`zz` has length `Nzz`, which is the \"length in bytes of a shared secret produced by\" a KEM, and is equal to 32 for P-256: https://cfrg.github.io/draft-irtf-cfrg-hpke/draft-irtf-cfrg-hpke.html#name-key-encapsulation-mechanism\r\n\r\nThe length in the test vector referenced is 32B (unless I'm misreading), so I'm closing this as resolved. Please re-open if I made a mistake!",
+          "createdAt": "2020-04-10T21:01:13Z",
+          "updatedAt": "2020-04-10T21:01:13Z"
+        }
+      ]
     }
   ],
   "pulls": [

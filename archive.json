@@ -1,6 +1,6 @@
 {
   "magic": "B8n2c@e8kvfx",
-  "timestamp": "2020-04-12T15:33:08.371962+00:00",
+  "timestamp": "2020-04-13T15:23:33.009886+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hpke",
   "labels": [
     {
@@ -5525,6 +5525,85 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 62,
+      "id": "MDExOlB1bGxSZXF1ZXN0NDAyMzU2MjE5",
+      "title": "Fix various leftover issues and update test vectors.",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/62",
+      "state": "OPEN",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The new test vectors omit fields not needed by certain modes, e.g., `psk` and `pskID` are not included in non-PSK modes.\r\n\r\ncc @blipp",
+      "createdAt": "2020-04-12T15:34:18Z",
+      "updatedAt": "2020-04-13T15:22:34Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3MzkyMjA3Njk3",
+          "commit": {
+            "abbreviatedOid": "05e9d15"
+          },
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "Good catches with the Setup functions, thanks!",
+          "createdAt": "2020-04-13T15:12:08Z",
+          "updatedAt": "2020-04-13T15:18:06Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "maybe add bytes as we did in some other places? Like \u201cof fixed length `Nh` bytes\u201d, or \u201cof length `Nh` bytes\u201d",
+              "createdAt": "2020-04-13T15:12:08Z",
+              "updatedAt": "2020-04-13T15:22:34Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3MzkyMjE0NDQz",
+          "commit": {
+            "abbreviatedOid": "05e9d15"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-04-13T15:21:59Z",
+          "updatedAt": "2020-04-13T15:22:00Z",
+          "comments": [
+            {
+              "originalPosition": 14,
+              "body": "```suggestion\r\n  - Extract(salt, IKM): Extract a pseudorandom key of fixed length `Nh` bytes\r\n```",
+              "createdAt": "2020-04-13T15:21:59Z",
+              "updatedAt": "2020-04-13T15:22:34Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 63,
+      "id": "MDExOlB1bGxSZXF1ZXN0NDAyNjg3Njgz",
+      "title": "Only hash PSK in the PSK and AuthPSK modes",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/63",
+      "state": "OPEN",
+      "author": "blipp",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "In the Base and Auth modes, the only PSK ever used is the default psk, which is constant and all zero. Instead of transforming the Nh bytes default psk into another constant of length Nh bytes, using LabeledExtract, we can just not transform the default psk at all and use it directly. This removes the performance penalty for non-psk modes.\r\n\r\nAn alternative would be that implementations pre-computed the transformed default psk value. This seems a stretch to me, as transforming the default psk does not buy anything in terms of provable security. If we assume that implementations specialize for one particular HPKE mode anyway, it also does not buy much in terms of reducing probability of implementation mistakes.",
+      "createdAt": "2020-04-13T15:07:53Z",
+      "updatedAt": "2020-04-13T15:07:53Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }

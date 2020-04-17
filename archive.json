@@ -1,6 +1,6 @@
 {
   "magic": "B8n2c@e8kvfx",
-  "timestamp": "2020-04-13T15:23:33.009886+00:00",
+  "timestamp": "2020-04-17T15:00:21.879587+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hpke",
   "labels": [
     {
@@ -5531,17 +5531,17 @@
       "id": "MDExOlB1bGxSZXF1ZXN0NDAyMzU2MjE5",
       "title": "Fix various leftover issues and update test vectors.",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/62",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "chris-wood",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The new test vectors omit fields not needed by certain modes, e.g., `psk` and `pskID` are not included in non-PSK modes.\r\n\r\ncc @blipp",
       "createdAt": "2020-04-12T15:34:18Z",
-      "updatedAt": "2020-04-13T15:22:34Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
+      "updatedAt": "2020-04-17T14:59:07Z",
+      "closedAt": "2020-04-17T14:59:07Z",
+      "mergedAt": "2020-04-17T14:59:07Z",
+      "mergedBy": "bifurcation",
       "comments": [],
       "reviews": [
         {
@@ -5583,6 +5583,19 @@
               "updatedAt": "2020-04-13T15:22:34Z"
             }
           ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3Mzk1NTMwMDE5",
+          "commit": {
+            "abbreviatedOid": "017a94d"
+          },
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2020-04-17T14:59:02Z",
+          "updatedAt": "2020-04-17T14:59:02Z",
+          "comments": []
         }
       ]
     },
@@ -5599,6 +5612,25 @@
       "body": "In the Base and Auth modes, the only PSK ever used is the default psk, which is constant and all zero. Instead of transforming the Nh bytes default psk into another constant of length Nh bytes, using LabeledExtract, we can just not transform the default psk at all and use it directly. This removes the performance penalty for non-psk modes.\r\n\r\nAn alternative would be that implementations pre-computed the transformed default psk value. This seems a stretch to me, as transforming the default psk does not buy anything in terms of provable security. If we assume that implementations specialize for one particular HPKE mode anyway, it also does not buy much in terms of reducing probability of implementation mistakes.",
       "createdAt": "2020-04-13T15:07:53Z",
       "updatedAt": "2020-04-13T15:07:53Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 64,
+      "id": "MDExOlB1bGxSZXF1ZXN0NDAyNjk4MDM3",
+      "title": "Remove unused function len",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/64",
+      "state": "OPEN",
+      "author": "blipp",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "as the PSK hashing step does no longer depend on the PSK's length.",
+      "createdAt": "2020-04-13T15:30:54Z",
+      "updatedAt": "2020-04-13T15:30:54Z",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,

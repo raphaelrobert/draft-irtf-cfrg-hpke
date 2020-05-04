@@ -1,6 +1,6 @@
 {
   "magic": "B8n2c@e8kvfx",
-  "timestamp": "2020-04-23T16:36:57.620886+00:00",
+  "timestamp": "2020-05-04T15:42:53.385870+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hpke",
   "labels": [
     {
@@ -5604,18 +5604,40 @@
       "id": "MDExOlB1bGxSZXF1ZXN0NDAyNjg3Njgz",
       "title": "Only hash PSK in the PSK and AuthPSK modes",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/63",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "blipp",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "In the Base and Auth modes, the only PSK ever used is the default psk, which is constant and all zero. Instead of transforming the Nh bytes default psk into another constant of length Nh bytes, using LabeledExtract, we can just not transform the default psk at all and use it directly. This removes the performance penalty for non-psk modes.\r\n\r\nAn alternative would be that implementations pre-computed the transformed default psk value. This seems a stretch to me, as transforming the default psk does not buy anything in terms of provable security. If we assume that implementations specialize for one particular HPKE mode anyway, it also does not buy much in terms of reducing probability of implementation mistakes.",
       "createdAt": "2020-04-13T15:07:53Z",
-      "updatedAt": "2020-04-13T15:07:53Z",
-      "closedAt": null,
+      "updatedAt": "2020-04-23T17:37:41Z",
+      "closedAt": "2020-04-23T17:37:41Z",
       "mergedAt": null,
       "mergedBy": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> An alternative would be that implementations pre-computed the transformed default psk value. This seems a stretch to me, as transforming the default psk does not buy anything in terms of provable security. If we assume that implementations specialize for one particular HPKE mode anyway, it also does not buy much in terms of reducing probability of implementation mistakes.\r\n\r\nI prefer this approach. It lets implementations pre-compute that value and simplify their KeySchedule code (no branches). ",
+          "createdAt": "2020-04-23T16:41:46Z",
+          "updatedAt": "2020-04-23T16:41:46Z"
+        },
+        {
+          "author": "bifurcation",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I agree with @chris-wood here.  Pre-hashing constant values is a known optimization trick; there's a similar issue with early data / PSKs in TLS.  I would suggest we just add a note somewhere reminding people that this optimization is possible.",
+          "createdAt": "2020-04-23T17:09:25Z",
+          "updatedAt": "2020-04-23T17:09:25Z"
+        },
+        {
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "That's fine with me, I'll close this pull request. The note about the pre-computation can go into a separate PR.",
+          "createdAt": "2020-04-23T17:37:41Z",
+          "updatedAt": "2020-04-23T17:37:41Z"
+        }
+      ],
       "reviews": []
     },
     {
@@ -5650,6 +5672,25 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 65,
+      "id": "MDExOlB1bGxSZXF1ZXN0NDEyNjM3ODEz",
+      "title": "Change labels for pskID and psk to be prefix-free",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/65",
+      "state": "OPEN",
+      "author": "blipp",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "We claim in the document that all our labels are prefix-free, but the labels for pskID (\"pskID\") and psk (\"psk\") were actually not prefix-free. Appending \"_hash\" is just the first thing I came up with, I am open to other suggestions for maybe shorter labels for these two cases.",
+      "createdAt": "2020-05-03T17:36:17Z",
+      "updatedAt": "2020-05-03T17:36:17Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }

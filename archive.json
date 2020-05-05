@@ -1,6 +1,6 @@
 {
   "magic": "B8n2c@e8kvfx",
-  "timestamp": "2020-05-04T15:42:53.385870+00:00",
+  "timestamp": "2020-05-05T21:10:30.247320+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hpke",
   "labels": [
     {
@@ -5678,19 +5678,33 @@
       "id": "MDExOlB1bGxSZXF1ZXN0NDEyNjM3ODEz",
       "title": "Change labels for pskID and psk to be prefix-free",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/65",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "blipp",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "We claim in the document that all our labels are prefix-free, but the labels for pskID (\"pskID\") and psk (\"psk\") were actually not prefix-free. Appending \"_hash\" is just the first thing I came up with, I am open to other suggestions for maybe shorter labels for these two cases.",
       "createdAt": "2020-05-03T17:36:17Z",
-      "updatedAt": "2020-05-03T17:36:17Z",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
+      "updatedAt": "2020-05-04T19:59:12Z",
+      "closedAt": "2020-05-04T19:59:12Z",
+      "mergedAt": "2020-05-04T19:59:12Z",
+      "mergedBy": "chris-wood",
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDA1MzAyNzU5",
+          "commit": {
+            "abbreviatedOid": "d4d09d1"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2020-05-04T19:59:06Z",
+          "updatedAt": "2020-05-04T19:59:06Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }

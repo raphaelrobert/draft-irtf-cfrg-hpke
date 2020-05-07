@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2020-05-07T00:02:05.837276+00:00",
+  "timestamp": "2020-05-07T12:20:10.759208+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hpke",
   "labels": [
     {
@@ -523,7 +523,7 @@
       "labels": [],
       "body": "Table 7.1 specifies an Nzz value of 64 for _DHKEM(P-521, HKDF-SHA512)_. The test vectors are using a value of 66, which seems right given:\r\n\r\n> Nzz: The length in bytes of a shared secret produced by the algorithm.\r\n\r\n(in context of KEM identifiers, not KDF).\r\n\r\nBut, 4.1 also states:\r\n\r\n> For the variants of DHKEM defined in this document, Ndh is equal to Npk, and the output length of the KDF's Extract function is Nzz bytes.\r\n\r\nWe should clarify whether Nzz is based on the ECDH or HKDF-Extract output length, and fix the test vectors if necessary.\r\n",
       "createdAt": "2020-05-06T21:38:37Z",
-      "updatedAt": "2020-05-06T23:59:36Z",
+      "updatedAt": "2020-05-07T12:19:55Z",
       "closedAt": null,
       "comments": [
         {
@@ -532,6 +532,65 @@
           "body": "Good catch. It should be 66. I think we fat fingered the calculation :-)\r\n\r\n   (512 + 7) >> 3 = 64\r\n\r\nThanks!",
           "createdAt": "2020-05-06T23:59:36Z",
           "updatedAt": "2020-05-06T23:59:36Z"
+        },
+        {
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "The values for `Nzz` were chosen to be the same as the output length of the hash function underlying the KDF used in the variants of DHKEM. In `DHKEM(P-521, HKDF-SHA512)`, the KDF is `HKDF-SHA512` with the hash function `SHA512`, which has output length 64 bytes.\r\n\r\nThus, as one of the possibilities mentioned by @kjacobs-moz , `Nzz` is based on the HKDF-Extract output length. That is because HKDF-Extract is exactly _one_ call to HMAC and returns its result; HMAC's output length is the output length of the underlying hash function. HKDF-Expand has variable output length, that is why it would not make sense to define Nzz via HKDF-Expand's output length, but rather we need to define HKDF-Expand's output length by Nzz.\r\n\r\nWhile a P-521 DH shared secret might justify, from a security level point of view, a KEM shared secret a bit longer than 64 bytes, I believe it is beneficial to keep it at 64 bytes because then HKDF-Expand is exactly _one_ call to HMAC. With 66 bytes, or 65 bytes, we would need an entire second call to HMAC, only to gain one byte. Also, because the KeySchedule continues with SHA512 as well, we do not benefit from the slightly higher security level, I think.\r\n\r\nTo conclude, I believe we should keep the 64 as it is.\r\n\r\nHaving written this, I admit that it took me a bit to understand what we meant with the sentence \u201cand the output length of the KDF's Extract function is Nzz bytes\u201d. While it is clearly true for the specified variants of DHKEM, it is a confusing formulation. Maybe we can come up with something better. (Edited to add: I just made a proposal in the discussion of #68.)",
+          "createdAt": "2020-05-07T06:56:06Z",
+          "updatedAt": "2020-05-07T07:11:49Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Hah! We all misunderstood that sentence. It didn't occur to me that the intention was to make `Nzz` match the size of HKDF-Extract based on text. Your proposal in #68 clears that up. I'll fix the code, update that PR, and send over new test vectors for folks to try. ",
+          "createdAt": "2020-05-07T12:02:31Z",
+          "updatedAt": "2020-05-07T12:02:31Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed in #68!",
+          "createdAt": "2020-05-07T12:19:55Z",
+          "updatedAt": "2020-05-07T12:19:55Z"
+        }
+      ]
+    },
+    {
+      "number": 69,
+      "id": "MDU6SXNzdWU2MTM2OTc3MjE=",
+      "title": "Unnecessary return value in Decap(), AuthDecap()",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/69",
+      "state": "OPEN",
+      "author": "kjacobs-moz",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "The spec definition of `Decap()` includes taking `enc` as a parameter, and returning it unmodified: \r\n\r\n```\r\n   def Decap(enc, skR):\r\n     pkE = Unmarshal(enc)\r\n     dh = DH(skR, pkE)\r\n\r\n     pkRm = Marshal(pk(skR))\r\n     kemContext = concat(enc, pkRm)\r\n\r\n     zz = ExtractAndExpand(dh, kemContext)\r\n     return zz, enc\r\n```\r\n\r\nOnly `return zz` is needed. The same applies to AuthDecap. ",
+      "createdAt": "2020-05-07T00:44:17Z",
+      "updatedAt": "2020-05-07T12:19:40Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Good catch, thanks! @chris-wood , do you want to incorporate this into #68 ?",
+          "createdAt": "2020-05-07T07:01:01Z",
+          "updatedAt": "2020-05-07T07:01:01Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Yep, will do!",
+          "createdAt": "2020-05-07T12:18:19Z",
+          "updatedAt": "2020-05-07T12:18:19Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Added to #68.",
+          "createdAt": "2020-05-07T12:19:40Z",
+          "updatedAt": "2020-05-07T12:19:40Z"
         }
       ]
     }
@@ -6197,19 +6256,69 @@
       "labels": [],
       "body": "Per #67 and #66. Thanks, @kjacobs-moz!",
       "createdAt": "2020-05-07T00:01:59Z",
-      "updatedAt": "2020-05-07T00:01:59Z",
+      "updatedAt": "2020-05-07T12:19:36Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
       "baseRefName": "master",
       "baseRefOid": "5bc57ba5753f6e76d6350e532c1ca069ac8b228c",
       "headRepository": "cfrg/draft-irtf-cfrg-hpke",
       "headRefName": "caw/vectors-and-nits",
-      "headRefOid": "c95bfa34bc2d09d119cc13cff3c37dd9a615cc12",
+      "headRefOid": "0491164a2717047f129c1f2e6b279f304453822f",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
-      "reviews": []
+      "comments": [
+        {
+          "author": "rozbb",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "These test vectors also pass on my impl",
+          "createdAt": "2020-05-07T04:21:30Z",
+          "updatedAt": "2020-05-07T04:21:30Z"
+        },
+        {
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Please see https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/67#issuecomment-625067374 where I reason about why the 64 bytes is what we wanted.",
+          "createdAt": "2020-05-07T06:56:58Z",
+          "updatedAt": "2020-05-07T06:57:32Z"
+        },
+        {
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "> I think 4.1 may still have a contradictory definition of Nzz (being the length of Extract output - maybe it's supposed to be \"and the output length of the KDF's _Expand_ function is Nzz bytes.\"?\r\n\r\nAs I said in https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/67#issuecomment-625067374, this sentence is really confusing and we should improve it, or delete it. The Expand function has variable output, so while the concrete invocation within ExtractAndExpand uses length Nzz, I believe we should not make a statement that sounds too general.",
+          "createdAt": "2020-05-07T06:59:56Z",
+          "updatedAt": "2020-05-07T06:59:56Z"
+        },
+        {
+          "author": "blipp",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Proposal: \u201cFor the variants of DHKEM defined in this document, Ndh is equal to Npk, and Nzz is equal to the output length of the hash function underlying the KDF.\u201d\r\n\r\nMaybe we chose to talk about HKDF-Extract in the current version because our abstract definition of a KDF does not mention a hash function, but only Extract and Expand. Given that the variants of DHKEM defined in the document all use HKDF, I think it might be ok and less confusing to write what I proposed.",
+          "createdAt": "2020-05-07T07:11:01Z",
+          "updatedAt": "2020-05-07T07:11:01Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@blipp I'll take your proposal -- it clears things up for me. Thanks!",
+          "createdAt": "2020-05-07T12:17:09Z",
+          "updatedAt": "2020-05-07T12:17:09Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDA3MDczNzgx",
+          "commit": {
+            "abbreviatedOid": "c95bfa3"
+          },
+          "author": "kjacobs-moz",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "Thanks! These vectors look right.\r\n\r\nI think 4.1 may still have a contradictory definition of Nzz (being the length of Extract output - maybe it's supposed to be \"and the output length of the KDF's *Expand* function is Nzz bytes.\"?",
+          "createdAt": "2020-05-07T00:24:52Z",
+          "updatedAt": "2020-05-07T00:24:52Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }

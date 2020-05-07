@@ -1,6 +1,6 @@
 {
-  "magic": "B8n2c@e8kvfx",
-  "timestamp": "2020-05-05T21:10:30.247320+00:00",
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2020-05-07T00:02:05.837276+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hpke",
   "labels": [
     {
@@ -486,6 +486,54 @@
           "updatedAt": "2020-04-10T21:01:13Z"
         }
       ]
+    },
+    {
+      "number": 66,
+      "id": "MDU6SXNzdWU2MTM2MTU3NDA=",
+      "title": "Updated test vectors do not match the spec",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/66",
+      "state": "OPEN",
+      "author": "kjacobs-moz",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "While updating labels for draft-03, I noticed that the test vectors added in 5bc57ba5753f6e76d6350e532c1ca069ac8b228c seem to be incorrect, matching an implementation that:\r\n\r\n1) Uses the label \"info_hash\" to extract `info_hash`, when draft-03 specifies \"info\".\r\n2) Uses the label \"psk\" to extract `psk`, when \"psk_hash\" is specified.  \r\n\r\nWith the \"_hash\" suffix swapped as above, my implementation generates matching outputs. ",
+      "createdAt": "2020-05-06T21:11:13Z",
+      "updatedAt": "2020-05-06T23:47:16Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Will fix -- thanks!",
+          "createdAt": "2020-05-06T23:47:16Z",
+          "updatedAt": "2020-05-06T23:47:16Z"
+        }
+      ]
+    },
+    {
+      "number": 67,
+      "id": "MDU6SXNzdWU2MTM2Mjk2MjI=",
+      "title": "Ambiguous Nzz definition, possible wrong value for P-521",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/67",
+      "state": "OPEN",
+      "author": "kjacobs-moz",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Table 7.1 specifies an Nzz value of 64 for _DHKEM(P-521, HKDF-SHA512)_. The test vectors are using a value of 66, which seems right given:\r\n\r\n> Nzz: The length in bytes of a shared secret produced by the algorithm.\r\n\r\n(in context of KEM identifiers, not KDF).\r\n\r\nBut, 4.1 also states:\r\n\r\n> For the variants of DHKEM defined in this document, Ndh is equal to Npk, and the output length of the KDF's Extract function is Nzz bytes.\r\n\r\nWe should clarify whether Nzz is based on the ECDH or HKDF-Extract output length, and fix the test vectors if necessary.\r\n",
+      "createdAt": "2020-05-06T21:38:37Z",
+      "updatedAt": "2020-05-06T23:59:36Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Good catch. It should be 66. I think we fat fingered the calculation :-)\r\n\r\n   (512 + 7) >> 3 = 64\r\n\r\nThanks!",
+          "createdAt": "2020-05-06T23:59:36Z",
+          "updatedAt": "2020-05-06T23:59:36Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -579,7 +627,16 @@
             }
           ]
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "39d01357849740a03daddfc980b8b65977c18b95",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "cridland",
+      "headRefOid": "7a9cf49502d6d5e69067192a17b39c6915ebaef5",
+      "mergeCommit": {
+        "oid": "4f950e2a3b02da24e6296962f637f9767eac8d72"
+      }
     },
     {
       "number": 2,
@@ -771,7 +828,16 @@
             }
           ]
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "4f950e2a3b02da24e6296962f637f9767eac8d72",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "omni",
+      "headRefOid": "4e53ac17d073a7f31f05760b912a05217c3f9401",
+      "mergeCommit": {
+        "oid": "8a33ffe1dd68b57e8e56503714698d1faa625098"
+      }
     },
     {
       "number": 3,
@@ -804,7 +870,16 @@
           "updatedAt": "2019-07-04T00:31:49Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "8a33ffe1dd68b57e8e56503714698d1faa625098",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "no-suite",
+      "headRefOid": "ab3d8e35e9ca772381fc69a09cac0cf730a0701d",
+      "mergeCommit": {
+        "oid": "01dcb8c9aa17059d73c84b1a3ffbbb38a8b163c7"
+      }
     },
     {
       "number": 4,
@@ -895,7 +970,16 @@
             }
           ]
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "01dcb8c9aa17059d73c84b1a3ffbbb38a8b163c7",
+      "headRepository": "chris-wood/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/edits",
+      "headRefOid": "b000857533b34b2befa3c6f7afa4e2033e6e89b4",
+      "mergeCommit": {
+        "oid": "15f9a03034d0ff33c87b66bedcc09a1d68d4b582"
+      }
     },
     {
       "number": 5,
@@ -1117,7 +1201,16 @@
             }
           ]
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "15f9a03034d0ff33c87b66bedcc09a1d68d4b582",
+      "headRepository": "chris-wood/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/single-shot",
+      "headRefOid": "6cd4833fafb0b88760673c3c2d2c8540f5bf4113",
+      "mergeCommit": {
+        "oid": "71f398052e3c67811096b626350d676a7c5a7d15"
+      }
     },
     {
       "number": 6,
@@ -1136,7 +1229,16 @@
       "mergedAt": "2019-09-18T22:20:19Z",
       "mergedBy": "bifurcation",
       "comments": [],
-      "reviews": []
+      "reviews": [],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "71f398052e3c67811096b626350d676a7c5a7d15",
+      "headRepository": "chris-wood/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/edits",
+      "headRefOid": "716a96603cdfb04da950c3cb1073b4e6a96a860f",
+      "mergeCommit": {
+        "oid": "4df6d6a5b1b3068add9b6f650fb47dd963d33189"
+      }
     },
     {
       "number": 7,
@@ -1197,7 +1299,14 @@
             }
           ]
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "4df6d6a5b1b3068add9b6f650fb47dd963d33189",
+      "headRepository": "dwd/draft-irtf-cfrg-hpke",
+      "headRefName": "patch-1",
+      "headRefOid": "d8e0c5076432bf34d50d8ee90b774c30bf2a00c4",
+      "mergeCommit": null
     },
     {
       "number": 8,
@@ -1243,7 +1352,16 @@
           "updatedAt": "2019-10-30T22:45:41Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "4df6d6a5b1b3068add9b6f650fb47dd963d33189",
+      "headRepository": "blipp/draft-irtf-cfrg-hpke",
+      "headRefName": "blipp_modes",
+      "headRefOid": "48560c7eca9002ad7d394e4889939857e6d5eafe",
+      "mergeCommit": {
+        "oid": "6c1357e79f70c4965cdd0538bdaf5b6b105b3864"
+      }
     },
     {
       "number": 9,
@@ -1394,7 +1512,16 @@
           "updatedAt": "2019-10-23T23:13:50Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "4df6d6a5b1b3068add9b6f650fb47dd963d33189",
+      "headRepository": "chris-wood/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/test-vectors",
+      "headRefOid": "99453d674292253633ddffdb2749bcade0a177ee",
+      "mergeCommit": {
+        "oid": "62cb35ee763163a0aca16590bc6c002d6e3b4b03"
+      }
     },
     {
       "number": 11,
@@ -1440,7 +1567,16 @@
           "updatedAt": "2019-10-30T22:44:19Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "62cb35ee763163a0aca16590bc6c002d6e3b4b03",
+      "headRepository": "blipp/draft-irtf-cfrg-hpke",
+      "headRefName": "blipp_singleshot",
+      "headRefOid": "c113b97c44de4225de5c6074a7f493f195cfb730",
+      "mergeCommit": {
+        "oid": "e866ebafed825b23170a82a449b7e552fe258536"
+      }
     },
     {
       "number": 13,
@@ -1473,7 +1609,16 @@
           "updatedAt": "2019-11-04T16:41:28Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "6c1357e79f70c4965cdd0538bdaf5b6b105b3864",
+      "headRepository": "chris-wood/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/vectors-take-2",
+      "headRefOid": "2220a95748d47ed084c9543d323c427aef01f98a",
+      "mergeCommit": {
+        "oid": "c5d76bf2fae5656eaf89833b4e6149e04c31d790"
+      }
     },
     {
       "number": 14,
@@ -1679,7 +1824,16 @@
           "updatedAt": "2019-11-04T17:22:13Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "6c1357e79f70c4965cdd0538bdaf5b6b105b3864",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "security-considerations",
+      "headRefOid": "0fa0658f0b81e718d207472c44c20dae0d06cc06",
+      "mergeCommit": {
+        "oid": "6d0a4b16b085d967d7c3ecb2d6bb8b0a4aef8057"
+      }
     },
     {
       "number": 15,
@@ -1698,7 +1852,16 @@
       "mergedAt": "2019-11-04T16:45:14Z",
       "mergedBy": "chris-wood",
       "comments": [],
-      "reviews": []
+      "reviews": [],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "c5d76bf2fae5656eaf89833b4e6149e04c31d790",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "ref-fix",
+      "headRefOid": "26336b03cc61a6f898c502be39033866f20fb364",
+      "mergeCommit": {
+        "oid": "e65f76e92a7f5de2a081ade0f0a5f462b34c9a97"
+      }
     },
     {
       "number": 17,
@@ -1731,7 +1894,16 @@
           "updatedAt": "2019-11-04T16:59:52Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "e65f76e92a7f5de2a081ade0f0a5f462b34c9a97",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "iana",
+      "headRefOid": "7e60a629b852c4de298e8b590275250cb2e5fae8",
+      "mergeCommit": {
+        "oid": "813fa48de8e15d472e3e418d3b50040d9848ec2f"
+      }
     },
     {
       "number": 18,
@@ -1764,7 +1936,16 @@
           "updatedAt": "2019-11-04T17:29:58Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "813fa48de8e15d472e3e418d3b50040d9848ec2f",
+      "headRepository": "chris-wood/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/no-more-encryption-context",
+      "headRefOid": "edda2fabdec311da45c4746e1d81d41543021163",
+      "mergeCommit": {
+        "oid": "f7173b56308a8f9244acdf54d9bd5e1cea9cda62"
+      }
     },
     {
       "number": 23,
@@ -2015,7 +2196,16 @@
             }
           ]
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "0788c5536297926ccc17009cfd24eb9adb9a3bd0",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "mattson",
+      "headRefOid": "08deb84f57fe2673f4213d4a5822dc46cf5ecc5c",
+      "mergeCommit": {
+        "oid": "d41dbb654900f47bf09b022d3774c21262c46a17"
+      }
     },
     {
       "number": 24,
@@ -2049,7 +2239,16 @@
           "updatedAt": "2019-12-05T14:14:24Z"
         }
       ],
-      "reviews": []
+      "reviews": [],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "0788c5536297926ccc17009cfd24eb9adb9a3bd0",
+      "headRepository": "suhasHere/draft-irtf-cfrg-hpke",
+      "headRefName": "master",
+      "headRefOid": "1720daf6d69cd9a63c25f422a01198b91bb4746b",
+      "mergeCommit": {
+        "oid": "43fc1cda50d4def683e4b59f517416a9f6126a65"
+      }
     },
     {
       "number": 25,
@@ -2068,7 +2267,16 @@
       "mergedAt": "2019-12-05T14:13:45Z",
       "mergedBy": "bifurcation",
       "comments": [],
-      "reviews": []
+      "reviews": [],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "43fc1cda50d4def683e4b59f517416a9f6126a65",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "revert-24-master",
+      "headRefOid": "054f58d897b65f8741f18a4a488cdd6eeed487ec",
+      "mergeCommit": {
+        "oid": "3d79c0f24fbf43474e47da8ca069bea521eed071"
+      }
     },
     {
       "number": 26,
@@ -2101,7 +2309,16 @@
           "updatedAt": "2019-12-12T18:15:29Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "3d79c0f24fbf43474e47da8ca069bea521eed071",
+      "headRepository": "suhasHere/draft-irtf-cfrg-hpke",
+      "headRefName": "master",
+      "headRefOid": "5c43e3da49fbb53f7de84b95f9acabf3ed8b19e1",
+      "mergeCommit": {
+        "oid": "9783537f604b3b2726ed0a8c64e6afd50e8e9d1e"
+      }
     },
     {
       "number": 27,
@@ -2154,7 +2371,16 @@
           "updatedAt": "2019-12-12T18:58:42Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "9783537f604b3b2726ed0a8c64e6afd50e8e9d1e",
+      "headRepository": "chris-wood/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/edits-and-exporter",
+      "headRefOid": "dfe7fd03691b1900f85415b9281750c29c4a9a58",
+      "mergeCommit": {
+        "oid": "61e80255c5c69f23f3febe007a572a111a3352ba"
+      }
     },
     {
       "number": 31,
@@ -2195,7 +2421,16 @@
           "updatedAt": "2020-01-23T17:20:17Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "d41dbb654900f47bf09b022d3774c21262c46a17",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/auth-psk-naming",
+      "headRefOid": "7f568f55d1e1c3f5b19fe141a3850e8d2b7a2e05",
+      "mergeCommit": {
+        "oid": "456eadc80ee02c6064e3ce3591de59f83be45049"
+      }
     },
     {
       "number": 32,
@@ -2236,7 +2471,16 @@
           "updatedAt": "2020-01-23T17:21:09Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "d41dbb654900f47bf09b022d3774c21262c46a17",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/key-schedule-notation",
+      "headRefOid": "ed3644b5dbcf12ddb849fb284ef1e619cd2c677f",
+      "mergeCommit": {
+        "oid": "a3ae7b301f6c95922b0897097dae8d03103f83bb"
+      }
     },
     {
       "number": 33,
@@ -2349,7 +2593,16 @@
           "updatedAt": "2020-01-24T15:36:39Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "d41dbb654900f47bf09b022d3774c21262c46a17",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/hpke-nonces",
+      "headRefOid": "7c20b2adc8e004ca8bbb7a5e599ca4eca61699a8",
+      "mergeCommit": {
+        "oid": "8829872725945a470bef092f2ff54e7f9b7bfc14"
+      }
     },
     {
       "number": 34,
@@ -2445,7 +2698,16 @@
             }
           ]
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "8829872725945a470bef092f2ff54e7f9b7bfc14",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/initiator-responder",
+      "headRefOid": "7cb0b926b348b44e742f134c16adcb29ac60ee69",
+      "mergeCommit": {
+        "oid": "06056da43f1826ca4549acca9358452f52ec2334"
+      }
     },
     {
       "number": 35,
@@ -2553,7 +2815,16 @@
           "updatedAt": "2020-01-31T19:46:55Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "8829872725945a470bef092f2ff54e7f9b7bfc14",
+      "headRepository": "chris-wood/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/point-validation",
+      "headRefOid": "66f33c1654fd73afa7d031ef6709e54e64df8a1d",
+      "mergeCommit": {
+        "oid": "4d65f12b240cbb36eb2d5f56eeba0a11fce66241"
+      }
     },
     {
       "number": 36,
@@ -2586,7 +2857,16 @@
           "updatedAt": "2020-02-10T04:05:02Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "06056da43f1826ca4549acca9358452f52ec2334",
+      "headRepository": "blipp/draft-irtf-cfrg-hpke",
+      "headRefName": "blipp_sizes",
+      "headRefOid": "01e32beeec86e14ce982cf7895aa0608ae65fd8c",
+      "mergeCommit": {
+        "oid": "c41aca085a5dd6dbe6cdd9f432220b2349d2411e"
+      }
     },
     {
       "number": 37,
@@ -2613,7 +2893,14 @@
           "updatedAt": "2020-02-24T14:14:16Z"
         }
       ],
-      "reviews": []
+      "reviews": [],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "c41aca085a5dd6dbe6cdd9f432220b2349d2411e",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/new-vectors",
+      "headRefOid": "137301a0683ebf9f4e5bbf94fce24a781b147361",
+      "mergeCommit": null
     },
     {
       "number": 38,
@@ -2646,7 +2933,16 @@
           "updatedAt": "2020-02-21T16:04:28Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "c41aca085a5dd6dbe6cdd9f432220b2349d2411e",
+      "headRepository": "blipp/draft-irtf-cfrg-hpke",
+      "headRefName": "blipp_fix_I_S",
+      "headRefOid": "4d12b47a9b2732e4a11e608fd3b13b16a8a5450d",
+      "mergeCommit": {
+        "oid": "6d564037bd3f3ec139a7bc1279dac97a26f41dea"
+      }
     },
     {
       "number": 39,
@@ -2679,7 +2975,16 @@
           "updatedAt": "2020-02-21T16:02:53Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "fef9eaca3be3ab271ffab29b47dbc4a8ab752060",
+      "headRepository": "blipp/draft-irtf-cfrg-hpke",
+      "headRefName": "blipp_octets_bytes",
+      "headRefOid": "78e8b1db2f1385f441f9fde91d2fb95a5f5e386b",
+      "mergeCommit": {
+        "oid": "176678135edd42d90dee45a3796c95b408b7e1a9"
+      }
     },
     {
       "number": 40,
@@ -2712,7 +3017,16 @@
           "updatedAt": "2020-02-21T16:02:12Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "c41aca085a5dd6dbe6cdd9f432220b2349d2411e",
+      "headRepository": "blipp/draft-irtf-cfrg-hpke",
+      "headRefName": "blipp_Npk",
+      "headRefOid": "032a2ee20c169ea033340301422fa757a9ef63bb",
+      "mergeCommit": {
+        "oid": "fef9eaca3be3ab271ffab29b47dbc4a8ab752060"
+      }
     },
     {
       "number": 44,
@@ -3159,7 +3473,16 @@
           "updatedAt": "2020-02-26T20:52:52Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "6d564037bd3f3ec139a7bc1279dac97a26f41dea",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/analysis",
+      "headRefOid": "61ed7d99037b5d7698a5d82e26cfddd65fb9e979",
+      "mergeCommit": {
+        "oid": "be909d595078606f97e76a67d72c28072c41bcfc"
+      }
     },
     {
       "number": 45,
@@ -3192,7 +3515,16 @@
           "updatedAt": "2020-02-28T14:32:59Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "6d564037bd3f3ec139a7bc1279dac97a26f41dea",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/new-vectors-2",
+      "headRefOid": "4515e6c5a788c64fa835e5ce88025c238dfc1945",
+      "mergeCommit": {
+        "oid": "70c44a2080abf83397b9f7d364ee01de153629eb"
+      }
     },
     {
       "number": 47,
@@ -3211,7 +3543,14 @@
       "mergedAt": null,
       "mergedBy": null,
       "comments": [],
-      "reviews": []
+      "reviews": [],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "be909d595078606f97e76a67d72c28072c41bcfc",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/domain-separation",
+      "headRefOid": "e4ef3ed0fa54b8752175554888c24756bde2eee1",
+      "mergeCommit": null
     },
     {
       "number": 48,
@@ -3367,7 +3706,16 @@
             }
           ]
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "70c44a2080abf83397b9f7d364ee01de153629eb",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/separation",
+      "headRefOid": "8bbbb3fbe8818dc39a52501e82be232827e84008",
+      "mergeCommit": {
+        "oid": "a025ae8aa80bcdc5065f5a25cf93bb971582bcfc"
+      }
     },
     {
       "number": 49,
@@ -3441,7 +3789,16 @@
           "updatedAt": "2020-03-04T18:45:48Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "70c44a2080abf83397b9f7d364ee01de153629eb",
+      "headRepository": "Bren2010/draft-irtf-cfrg-hpke",
+      "headRefName": "brendan/kem-sizes",
+      "headRefOid": "6d24cc78d0ddda6064f45b8094be9fe337624eed",
+      "mergeCommit": {
+        "oid": "e4be5411828691b396fb2de7f9a40a319765a7d0"
+      }
     },
     {
       "number": 50,
@@ -4745,7 +5102,16 @@
           "updatedAt": "2020-04-10T20:31:16Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "8d1a29a3dffd46a3cc69d315e5dfe58a74961774",
+      "headRepository": "blipp/draft-irtf-cfrg-hpke",
+      "headRefName": "blipp_dhkem",
+      "headRefOid": "09acc770c7604185836085499b7284dcfa0568a8",
+      "mergeCommit": {
+        "oid": "916823a65f4cbf1f7f0918f96fd6062968f06d68"
+      }
     },
     {
       "number": 51,
@@ -4866,7 +5232,16 @@
           "updatedAt": "2020-03-09T16:08:18Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "a025ae8aa80bcdc5065f5a25cf93bb971582bcfc",
+      "headRepository": "blipp/draft-irtf-cfrg-hpke",
+      "headRefName": "blipp_key_schedule_inputs",
+      "headRefOid": "ecede56bd01859b652cb8fef9eccb0f195897b25",
+      "mergeCommit": {
+        "oid": "72f04cd7eb0138de86300d305d516a82d7d638bd"
+      }
     },
     {
       "number": 54,
@@ -4885,7 +5260,16 @@
       "mergedAt": "2020-03-13T20:32:50Z",
       "mergedBy": "bifurcation",
       "comments": [],
-      "reviews": []
+      "reviews": [],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "72f04cd7eb0138de86300d305d516a82d7d638bd",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/author",
+      "headRefOid": "77a32fd23c210fb9eb6bf7d8770617f37efde9fc",
+      "mergeCommit": {
+        "oid": "ea4494566f7d2ef764b27ae36af2837415a46ef6"
+      }
     },
     {
       "number": 55,
@@ -4926,7 +5310,16 @@
           "updatedAt": "2020-03-20T14:36:47Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "ea4494566f7d2ef764b27ae36af2837415a46ef6",
+      "headRepository": "blipp/draft-irtf-cfrg-hpke",
+      "headRefName": "blipp_56ar3",
+      "headRefOid": "30c452723e2804d15312291c95ac416d06df6039",
+      "mergeCommit": {
+        "oid": "1674f75832d0f633119f1f5f032ad340a47b6ce0"
+      }
     },
     {
       "number": 56,
@@ -5077,7 +5470,16 @@
           "updatedAt": "2020-03-23T15:45:04Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "ea4494566f7d2ef764b27ae36af2837415a46ef6",
+      "headRepository": "blipp/draft-irtf-cfrg-hpke",
+      "headRefName": "blipp_curves",
+      "headRefOid": "8aa9439e4400f78f142ee8f72aeb8a13d532cd6c",
+      "mergeCommit": {
+        "oid": "b3baa62ce8b603ec60553cb728ba92e30c34924b"
+      }
     },
     {
       "number": 57,
@@ -5110,7 +5512,16 @@
           "updatedAt": "2020-03-20T15:48:12Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "1674f75832d0f633119f1f5f032ad340a47b6ce0",
+      "headRepository": "rozbb/draft-irtf-cfrg-hpke",
+      "headRefName": "master",
+      "headRefOid": "7996c0232eeec6eb6d8803b477d19368721f153b",
+      "mergeCommit": {
+        "oid": "bf47c4c73e825839fa7d506ce709f32a593e9a48"
+      }
     },
     {
       "number": 58,
@@ -5143,7 +5554,16 @@
           "updatedAt": "2020-03-23T15:53:56Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "bf47c4c73e825839fa7d506ce709f32a593e9a48",
+      "headRepository": "blipp/draft-irtf-cfrg-hpke",
+      "headRefName": "patch-1",
+      "headRefOid": "f0b91b68c56999574c80e0f2503c3ea296321521",
+      "mergeCommit": {
+        "oid": "8d1a29a3dffd46a3cc69d315e5dfe58a74961774"
+      }
     },
     {
       "number": 59,
@@ -5458,7 +5878,14 @@
             }
           ]
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "8d1a29a3dffd46a3cc69d315e5dfe58a74961774",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/psk-lengths",
+      "headRefOid": "b3ac918c3ccf2cb08278ccd90acbd905eec4085e",
+      "mergeCommit": null
     },
     {
       "number": 60,
@@ -5491,7 +5918,16 @@
           "updatedAt": "2020-03-30T22:54:40Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "8d1a29a3dffd46a3cc69d315e5dfe58a74961774",
+      "headRepository": "blipp/draft-irtf-cfrg-hpke",
+      "headRefName": "blipp_validation",
+      "headRefOid": "83b124e287c4df6d22392fe1bd7361e1f89e9a1c",
+      "mergeCommit": {
+        "oid": "8dafe8aee83c8440be7d622722474e45ccf69037"
+      }
     },
     {
       "number": 61,
@@ -5524,7 +5960,16 @@
           "updatedAt": "2020-03-30T22:56:12Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "8d1a29a3dffd46a3cc69d315e5dfe58a74961774",
+      "headRepository": "blipp/draft-irtf-cfrg-hpke",
+      "headRefName": "blipp_len",
+      "headRefOid": "3463416951bf30502c71e687476883bad28fb4b6",
+      "mergeCommit": {
+        "oid": "cf81e410aad729da44387aefa8edd294f6d1ca0e"
+      }
     },
     {
       "number": 62,
@@ -5597,7 +6042,16 @@
           "updatedAt": "2020-04-17T14:59:02Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "916823a65f4cbf1f7f0918f96fd6062968f06d68",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/nits",
+      "headRefOid": "017a94da26766d7b7d5ae41868230725d337714f",
+      "mergeCommit": {
+        "oid": "4a1a0ac3350fb837ef9b339a881dc284c07454e3"
+      }
     },
     {
       "number": 63,
@@ -5638,7 +6092,14 @@
           "updatedAt": "2020-04-23T17:37:41Z"
         }
       ],
-      "reviews": []
+      "reviews": [],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "916823a65f4cbf1f7f0918f96fd6062968f06d68",
+      "headRepository": "blipp/draft-irtf-cfrg-hpke",
+      "headRefName": "blipp_psk",
+      "headRefOid": "84ef51656daf93ac3a74e49a3cbfaebd1d09afcf",
+      "mergeCommit": null
     },
     {
       "number": 64,
@@ -5671,7 +6132,16 @@
           "updatedAt": "2020-04-23T16:36:24Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "916823a65f4cbf1f7f0918f96fd6062968f06d68",
+      "headRepository": "blipp/draft-irtf-cfrg-hpke",
+      "headRefName": "blipp_len",
+      "headRefOid": "7754f3b64934f63f5f7d63f4f6b7d886890b5345",
+      "mergeCommit": {
+        "oid": "fe97496c9ede2f8eaa106e3e607d43d6f4ac0dee"
+      }
     },
     {
       "number": 65,
@@ -5704,7 +6174,42 @@
           "updatedAt": "2020-05-04T19:59:06Z",
           "comments": []
         }
-      ]
+      ],
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "fe97496c9ede2f8eaa106e3e607d43d6f4ac0dee",
+      "headRepository": "blipp/draft-irtf-cfrg-hpke",
+      "headRefName": "patch-2",
+      "headRefOid": "d4d09d1591fbad2c2874e4ba631b4ac16deef2be",
+      "mergeCommit": {
+        "oid": "961a873d95c9631a375d3865feb33cbd88c55de2"
+      }
+    },
+    {
+      "number": 68,
+      "id": "MDExOlB1bGxSZXF1ZXN0NDE0MzkyMDI5",
+      "title": "Update vectors and one table nit",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/68",
+      "state": "OPEN",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Per #67 and #66. Thanks, @kjacobs-moz!",
+      "createdAt": "2020-05-07T00:01:59Z",
+      "updatedAt": "2020-05-07T00:01:59Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "5bc57ba5753f6e76d6350e532c1ca069ac8b228c",
+      "headRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "headRefName": "caw/vectors-and-nits",
+      "headRefOid": "c95bfa34bc2d09d119cc13cff3c37dd9a615cc12",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }

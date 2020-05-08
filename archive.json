@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2020-05-07T12:20:10.759208+00:00",
+  "timestamp": "2020-05-08T19:28:36.198261+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hpke",
   "labels": [
     {
@@ -444,15 +444,15 @@
       "id": "MDU6SXNzdWU1NzgxNjY4NzU=",
       "title": "Mismatch on psk length for SHA256",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/52",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "R1kM",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "At the moment, the length of psk in the test vectors is the same for SHA256 and SHA512. As far as I can tell, psk should only contain 32 bytes for SHA256 instead of 64.\r\nAdditionally, psk, pskID and pkS are not needed in the Base setup (https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/master/draft-irtf-cfrg-hpke.md#base-setup-information for instance)",
       "createdAt": "2020-03-09T20:21:10Z",
-      "updatedAt": "2020-04-10T21:05:09Z",
-      "closedAt": null,
+      "updatedAt": "2020-05-07T12:20:49Z",
+      "closedAt": "2020-05-07T12:20:48Z",
       "comments": [
         {
           "author": "chris-wood",
@@ -460,6 +460,13 @@
           "body": "> At the moment, the length of psk in the test vectors is the same for SHA256 and SHA512. As far as I can tell, psk should only contain 32 bytes for SHA256 instead of 64.\r\n\r\nThe length of the PSK is not required to match the KDF. I hope we clarified that in the current version: https://cfrg.github.io/draft-irtf-cfrg-hpke/draft-irtf-cfrg-hpke.html#name-authentication-using-a-pre-\r\n\r\n> Additionally, psk, pskID and pkS are not needed in the Base setup (https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/master/draft-irtf-cfrg-hpke.md#base-setup-information for instance)\r\n\r\nGood catch! I'll use this issue to track removing them from those modes. ",
           "createdAt": "2020-04-10T21:05:09Z",
           "updatedAt": "2020-04-10T21:05:09Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This should be fixed now. Closing!",
+          "createdAt": "2020-05-07T12:20:48Z",
+          "updatedAt": "2020-05-07T12:20:48Z"
         }
       ]
     },
@@ -516,15 +523,15 @@
       "id": "MDU6SXNzdWU2MTM2Mjk2MjI=",
       "title": "Ambiguous Nzz definition, possible wrong value for P-521",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/67",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "kjacobs-moz",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "Table 7.1 specifies an Nzz value of 64 for _DHKEM(P-521, HKDF-SHA512)_. The test vectors are using a value of 66, which seems right given:\r\n\r\n> Nzz: The length in bytes of a shared secret produced by the algorithm.\r\n\r\n(in context of KEM identifiers, not KDF).\r\n\r\nBut, 4.1 also states:\r\n\r\n> For the variants of DHKEM defined in this document, Ndh is equal to Npk, and the output length of the KDF's Extract function is Nzz bytes.\r\n\r\nWe should clarify whether Nzz is based on the ECDH or HKDF-Extract output length, and fix the test vectors if necessary.\r\n",
       "createdAt": "2020-05-06T21:38:37Z",
-      "updatedAt": "2020-05-07T12:19:55Z",
-      "closedAt": null,
+      "updatedAt": "2020-05-08T19:28:30Z",
+      "closedAt": "2020-05-08T19:28:30Z",
       "comments": [
         {
           "author": "chris-wood",
@@ -561,15 +568,15 @@
       "id": "MDU6SXNzdWU2MTM2OTc3MjE=",
       "title": "Unnecessary return value in Decap(), AuthDecap()",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/69",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "kjacobs-moz",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "The spec definition of `Decap()` includes taking `enc` as a parameter, and returning it unmodified: \r\n\r\n```\r\n   def Decap(enc, skR):\r\n     pkE = Unmarshal(enc)\r\n     dh = DH(skR, pkE)\r\n\r\n     pkRm = Marshal(pk(skR))\r\n     kemContext = concat(enc, pkRm)\r\n\r\n     zz = ExtractAndExpand(dh, kemContext)\r\n     return zz, enc\r\n```\r\n\r\nOnly `return zz` is needed. The same applies to AuthDecap. ",
       "createdAt": "2020-05-07T00:44:17Z",
-      "updatedAt": "2020-05-07T12:19:40Z",
-      "closedAt": null,
+      "updatedAt": "2020-05-08T19:28:23Z",
+      "closedAt": "2020-05-08T19:28:23Z",
       "comments": [
         {
           "author": "blipp",
@@ -6249,24 +6256,26 @@
       "id": "MDExOlB1bGxSZXF1ZXN0NDE0MzkyMDI5",
       "title": "Update vectors and one table nit",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/68",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "chris-wood",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Per #67 and #66. Thanks, @kjacobs-moz!",
       "createdAt": "2020-05-07T00:01:59Z",
-      "updatedAt": "2020-05-07T12:19:36Z",
+      "updatedAt": "2020-05-08T19:28:03Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
       "baseRefName": "master",
       "baseRefOid": "5bc57ba5753f6e76d6350e532c1ca069ac8b228c",
       "headRepository": "cfrg/draft-irtf-cfrg-hpke",
       "headRefName": "caw/vectors-and-nits",
       "headRefOid": "0491164a2717047f129c1f2e6b279f304453822f",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2020-05-08T19:28:03Z",
+      "mergedAt": "2020-05-08T19:28:03Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "312b9da6fd832e07cccae9381605d657052de147"
+      },
       "comments": [
         {
           "author": "rozbb",
@@ -6302,6 +6311,41 @@
           "body": "@blipp I'll take your proposal -- it clears things up for me. Thanks!",
           "createdAt": "2020-05-07T12:17:09Z",
           "updatedAt": "2020-05-07T12:17:09Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@kjacobs-moz, @rozbb, @blipp please have a look (and test) the latest vectors and changes. They make clear that Nzz is the KDF's output size. (I also removed superfluous output from {Auth}Decap.)",
+          "createdAt": "2020-05-07T12:22:24Z",
+          "updatedAt": "2020-05-07T12:22:24Z"
+        },
+        {
+          "author": "kjacobs-moz",
+          "authorAssociation": "NONE",
+          "body": "Thanks @chris-wood, @blipp. These vectors pass with the updated Nzz value, though my implementation is limited to base mode. ",
+          "createdAt": "2020-05-07T15:15:12Z",
+          "updatedAt": "2020-05-07T15:15:12Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks for confirming!",
+          "createdAt": "2020-05-07T15:15:59Z",
+          "updatedAt": "2020-05-07T15:15:59Z"
+        },
+        {
+          "author": "rozbb",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I don't have X448 or P-curves implemented yet, but everything using X25519 passes for me.",
+          "createdAt": "2020-05-07T15:22:31Z",
+          "updatedAt": "2020-05-07T15:22:31Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks, @rozbb!",
+          "createdAt": "2020-05-07T15:24:07Z",
+          "updatedAt": "2020-05-07T15:24:07Z"
         }
       ],
       "reviews": [

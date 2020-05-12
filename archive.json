@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2020-05-08T19:28:36.198261+00:00",
+  "timestamp": "2020-05-12T12:57:43.647517+00:00",
   "repo": "cfrg/draft-irtf-cfrg-hpke",
   "labels": [
     {
@@ -499,15 +499,15 @@
       "id": "MDU6SXNzdWU2MTM2MTU3NDA=",
       "title": "Updated test vectors do not match the spec",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/66",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "kjacobs-moz",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "While updating labels for draft-03, I noticed that the test vectors added in 5bc57ba5753f6e76d6350e532c1ca069ac8b228c seem to be incorrect, matching an implementation that:\r\n\r\n1) Uses the label \"info_hash\" to extract `info_hash`, when draft-03 specifies \"info\".\r\n2) Uses the label \"psk\" to extract `psk`, when \"psk_hash\" is specified.  \r\n\r\nWith the \"_hash\" suffix swapped as above, my implementation generates matching outputs. ",
       "createdAt": "2020-05-06T21:11:13Z",
-      "updatedAt": "2020-05-06T23:47:16Z",
-      "closedAt": null,
+      "updatedAt": "2020-05-08T19:28:37Z",
+      "closedAt": "2020-05-08T19:28:37Z",
       "comments": [
         {
           "author": "chris-wood",
@@ -600,6 +600,46 @@
           "updatedAt": "2020-05-07T12:19:40Z"
         }
       ]
+    },
+    {
+      "number": 71,
+      "id": "MDU6SXNzdWU2MTUyMzI3ODQ=",
+      "title": "pkSm does nothing in KeySchedule",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/71",
+      "state": "OPEN",
+      "author": "rozbb",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I was looking through a code coverage map of my implementation and realized that `default_pkSm` is never actually used anywhere. `KeySchedule` takes in a `pkSm` and uses it to sanity-check the given `mode`, and then uses it nowhere in the key schedule itself. Should `pkSm` be removed as an argument?",
+      "createdAt": "2020-05-09T18:17:57Z",
+      "updatedAt": "2020-05-12T12:56:43Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "It's there primarily to help distinguish the mode, so I think we ought to keep it. That said, it might encourage implementations to pass it when not needed. \r\n\r\nIf you were to remove it, how would you specify the mode check?",
+          "createdAt": "2020-05-12T12:56:43Z",
+          "updatedAt": "2020-05-12T12:56:43Z"
+        }
+      ]
+    },
+    {
+      "number": 72,
+      "id": "MDU6SXNzdWU2MTYxMTI1NjI=",
+      "title": "Contents of a context aren't well-defined",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/issues/72",
+      "state": "OPEN",
+      "author": "davidben",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "This is just an editorial comment. The spec doesn't seem to define the contents of a \"context\" very clearly. Section 5 says:\r\n> A \"context\" encodes the AEAD algorithm and key in use, and manages the nonces used so that the same nonce is not used with multiple plaintexts.\r\n\r\nBut it also has an exporter secret. Then section 5.1 says:\r\n> return Context(key, nonce, exporter_secret)\r\n\r\nBut we haven't defined the `Context` function yet. I'm guessing the intent is that `Context` produces some sort of record type with those field names? But that wouldn't initialize `Context.seq` used later in 5.2. (Confusingly, this `Context` is distinct from the `context` variable which contains an `HPKEContext` structure. Maybe the latter could be renamed?)\r\n\r\nThen 5.2 lists out the contents of a \"context' more explicitly, including the first mention of a sequence number. But it omits the exporter secret again. (Should \"The sender's context MUST be used for encryption only. Similarly, the recipient's context MUST be used for decryption only.\" be rephrased? One could read that as saying export is also not okay.)\r\n\r\nThen 5.3 mentions a context having an \"exporter secret\", but this is actually the only instance of that phrase in the document.",
+      "createdAt": "2020-05-11T19:05:28Z",
+      "updatedAt": "2020-05-11T19:05:28Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -6363,6 +6403,42 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 70,
+      "id": "MDExOlB1bGxSZXF1ZXN0NDE1NDY5NDA0",
+      "title": "Removed mention of subgroups in point validation paragraph",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-hpke/pull/70",
+      "state": "MERGED",
+      "author": "rozbb",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "There is no need to check that a point of a NIST P-curve is in the \"correct prime-order subgroup\" because all P-curves have cofactor 1.\r\n\r\nSource: [NIST FIPS 186-4](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-4.pdf) appendix D.1.2",
+      "createdAt": "2020-05-08T23:09:09Z",
+      "updatedAt": "2020-05-12T12:57:16Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-hpke",
+      "baseRefName": "master",
+      "baseRefOid": "312b9da6fd832e07cccae9381605d657052de147",
+      "headRepository": "rozbb/draft-irtf-cfrg-hpke",
+      "headRefName": "master",
+      "headRefOid": "60edaf522105e5b2b2f61507f079779d13483640",
+      "closedAt": "2020-05-12T12:57:10Z",
+      "mergedAt": "2020-05-12T12:57:10Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "e955931cdc4e9708da2fd4d905dd920fc4668c85"
+      },
+      "comments": [
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks!",
+          "createdAt": "2020-05-12T12:57:15Z",
+          "updatedAt": "2020-05-12T12:57:15Z"
+        }
+      ],
+      "reviews": []
     }
   ]
 }
